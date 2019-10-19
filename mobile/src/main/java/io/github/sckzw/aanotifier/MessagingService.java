@@ -87,14 +87,13 @@ public class MessagingService extends NotificationListenerService {
             return;
         }
 
-        if ( packageName.equals( "io.github.sckzw.aanotifier" ) ||
-                packageName.equals( "com.google.android.music" ) ) {
+        if ( packageName.equals( "io.github.sckzw.aanotifier" ) ) {
             return;
         }
 
-        //if ( mCarMode ) {
+        // if ( mCarMode ) {
         sendNotification( sbn );
-        //}
+        // }
     }
 
     @Override
@@ -136,16 +135,16 @@ public class MessagingService extends NotificationListenerService {
             text = notification.tickerText.toString();
         }
 
-        if ( ! text.startsWith( title ) ) {
+        if ( !text.startsWith( title ) ) {
             text = title + ": " + text;
         }
 
         String appName = getApplicationName( sbn.getPackageName() );
 
-        if ( ! text.startsWith( appName ) ) {
+        if ( !text.startsWith( appName ) ) {
             text = appName + ": " + text;
         }
-        if ( ! title.startsWith( appName ) ) {
+        if ( !title.startsWith( appName ) ) {
             title = appName + ": " + title;
         }
 
@@ -202,92 +201,4 @@ public class MessagingService extends NotificationListenerService {
 
         return (String)( ai != null ? pm.getApplicationLabel( ai ) : "" );
     }
-
-    /*
-    private void sendNotification( StatusBarNotification sbn ) {
-        int conversationId = sbn.getId();
-        Bundle extras = sbn.getNotification().extras;
-
-        String title = extras.getString( Notification.EXTRA_TITLE );
-        CharSequence text = extras.getCharSequence( Notification.EXTRA_TEXT );
-
-        // A pending Intent for reads
-        PendingIntent readPendingIntent = PendingIntent.getBroadcast( getApplicationContext(),
-                conversationId,
-                // createIntent( conversationId, READ_ACTION ),
-                new Intent( getApplicationContext(), MessageReadReceiver.class )
-                        .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES )
-                        .setAction( READ_ACTION )
-                        .putExtra( CONVERSATION_ID, conversationId ),
-                PendingIntent.FLAG_UPDATE_CURRENT );
-
-        NotificationCompat.Action markAsReadAction = new NotificationCompat.Action.Builder( R.drawable.ic_launcher_foreground,
-                "Mark as Read", readPendingIntent )
-                .setSemanticAction( NotificationCompat.Action.SEMANTIC_ACTION_MARK_AS_READ )
-                .setShowsUserInterface( false )
-                .build();
-
-        // Building a Pending Intent for the reply action to trigger
-        PendingIntent replyPendingIntent = PendingIntent.getBroadcast( getApplicationContext(),
-                conversationId,
-                // createIntent( conversationId, REPLY_ACTION ),
-                new Intent( getApplicationContext(), MessageReplyReceiver.class )
-                        .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES )
-                        .setAction( REPLY_ACTION )
-                        .putExtra( CONVERSATION_ID, conversationId ),
-                PendingIntent.FLAG_UPDATE_CURRENT );
-
-        // Build a RemoteInput for receiving voice input in a Car Notification
-        RemoteInput remoteInput = new RemoteInput.Builder( EXTRA_VOICE_REPLY )
-                //.setLabel( "Reply by voice" )
-                .build();
-
-        NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder( R.drawable.ic_launcher_foreground,
-                "Reply", replyPendingIntent )
-                .setSemanticAction( NotificationCompat.Action.SEMANTIC_ACTION_REPLY )
-                .setShowsUserInterface( false )
-                .addRemoteInput( remoteInput )
-                .build();
-
-        // Create the UnreadConversation and populate it with the participant name,
-        // read and reply intents.
-//        UnreadConversation.Builder unreadConvBuilder =
-//                new UnreadConversation.Builder( participant )
-//                        .setLatestTimestamp( timestamp )
-//                        .setReadPendingIntent( readPendingIntent )
-//                        .setReplyAction( replyPendingIntent, remoteInput )
-//                        .addMessage( message );
-
-        Person user = new Person.Builder()
-                .setName( title )
-                .setIcon( IconCompat.createWithResource( getApplicationContext(), R.drawable.ic_launcher_foreground ) )
-                .build();
-
-        NotificationCompat.MessagingStyle style = new NotificationCompat.MessagingStyle( user )
-                .setConversationTitle( title )
-                .addMessage( text, sbn.getPostTime(), user );
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder( getApplicationContext() )
-                // Set the application notification icon:
-                .setSmallIcon( R.drawable.ic_launcher_foreground )
-
-                // Set the large icon, for example a picture of the other recipient of the message
-                .setLargeIcon( (Bitmap)extras.get( Notification.EXTRA_LARGE_ICON ) )
-
-                .setStyle( style )
-                .addAction( replyAction )
-                .addAction( markAsReadAction )
-                .setChannelId( "CHANNEL_ID" );
-
-//                .setContentText( message )
-//                .setWhen( timestamp )
-//                .setContentTitle( participant )
-//                .setContentIntent( readPendingIntent )
-//                .extend( new CarExtender()
-//                        .setUnreadConversation( unreadConvBuilder.build() )
-//                );
-
-        mNotificationManager.notify( conversationId, builder.build() );
-    }
-    */
 }

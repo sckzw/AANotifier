@@ -15,17 +15,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
-        /*
-        final PackageManager mPackageManager = getApplicationContext().getPackageManager();
-        List< ApplicationInfo > appInfoList = mPackageManager.getInstalledApplications( PackageManager.GET_META_DATA );
-        for ( ApplicationInfo appInfo : appInfoList ) {
-            Bundle bundle = appInfo.metaData;
-            if ( bundle != null && bundle.containsKey( "com.google.android.gms.car.application" ) ) {
-                Log.i( "MainActivity", mPackageManager.getApplicationLabel( appInfo ).toString() + ", " + appInfo.packageName );
-            }
-        }
-        */
-
         findViewById( R.id.button_notification_access ).setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick( View view ) {
