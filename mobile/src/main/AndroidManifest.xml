@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.sckzw.aanotifier">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
+        <service
+            android:name="io.github.sckzw.aanotifier.MessagingService"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="io.github.sckzw.aanotifier.MessageReadReceiver">
+            <intent-filter>
+                <action android:name="io.github.sckzw.aanotifier.ACTION_MESSAGE_READ" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="io.github.sckzw.aanotifier.MessageReplyReceiver">
+            <intent-filter>
+                <action android:name="io.github.sckzw.aanotifier.ACTION_MESSAGE_REPLY" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name="io.github.sckzw.aanotifier.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
