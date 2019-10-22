@@ -1,25 +1,10 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.github.sckzw.aanotifier;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -112,25 +97,27 @@ public class MessagingService extends NotificationListenerService {
     }
 
     private void sendNotification( StatusBarNotification sbn ) {
+        Context appContext = getApplicationContext();
         Notification notification = sbn.getNotification();
         Bundle extras = notification.extras;
         long timeStamp = sbn.getPostTime();
         int conversationId = 0;
+        CharSequence charSequence;
 
         String title = "";
 
-        if ( extras.containsKey( Notification.EXTRA_TITLE ) ) {
-            title = extras.getCharSequence( Notification.EXTRA_TITLE ).toString();
-        } else if ( extras.containsKey( Notification.EXTRA_TITLE_BIG ) ) {
-            title = extras.getCharSequence( Notification.EXTRA_TITLE_BIG ).toString();
+        if ( extras.containsKey( Notification.EXTRA_TITLE ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TITLE ) ) != null ) {
+            title = charSequence.toString();
+        } else if ( extras.containsKey( Notification.EXTRA_TITLE_BIG ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TITLE_BIG ) ) != null ) {
+            title = charSequence.toString();
         }
 
         String text = "";
 
-        if ( extras.containsKey( Notification.EXTRA_TEXT ) ) {
-            text = extras.getCharSequence( Notification.EXTRA_TEXT ).toString();
-        } else if ( extras.containsKey( Notification.EXTRA_BIG_TEXT ) ) {
-            text = extras.getCharSequence( Notification.EXTRA_BIG_TEXT ).toString();
+        if ( extras.containsKey( Notification.EXTRA_TEXT ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TEXT ) ) != null ) {
+            text = charSequence.toString();
+        } else if ( extras.containsKey( Notification.EXTRA_BIG_TEXT ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_BIG_TEXT ) ) != null ) {
+            text = charSequence.toString();
         } else if ( notification.tickerText != null ) {
             text = notification.tickerText.toString();
         }
@@ -149,18 +136,18 @@ public class MessagingService extends NotificationListenerService {
         }
 
         PendingIntent readPendingIntent = PendingIntent.getBroadcast(
-                getApplicationContext(),
+                appContext,
                 conversationId,
-                new Intent( getApplicationContext(), MessageReadReceiver.class )
+                new Intent( appContext, MessageReadReceiver.class )
                         .setAction( READ_ACTION )
                         .putExtra( CONVERSATION_ID, conversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
                 PendingIntent.FLAG_UPDATE_CURRENT );
 
         PendingIntent replyPendingIntent = PendingIntent.getBroadcast(
-                getApplicationContext(),
+                appContext,
                 conversationId,
-                new Intent( getApplicationContext(), MessageReplyReceiver.class )
+                new Intent( appContext, MessageReplyReceiver.class )
                         .setAction( REPLY_ACTION )
                         .putExtra( CONVERSATION_ID, conversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
@@ -175,7 +162,7 @@ public class MessagingService extends NotificationListenerService {
                         .setReplyAction( replyPendingIntent, remoteInput );
         unreadConversationBuilder.addMessage( text );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder( getApplicationContext() )
+        NotificationCompat.Builder builder = new NotificationCompat.Builder( appContext )
                 .setChannelId( NOTIFICATION_CHANNEL_ID )
                 .setSmallIcon( R.mipmap.ic_launcher )
                 .setLargeIcon( (Bitmap)extras.get( Notification.EXTRA_LARGE_ICON ) )
