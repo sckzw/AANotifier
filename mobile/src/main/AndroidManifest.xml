@@ -14,7 +14,7 @@
             android:resource="@xml/automotive_app_desc" />
 
         <service
-            android:name="io.github.sckzw.aanotifier.MessagingService"
+            android:name=".MessagingService"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
@@ -22,18 +22,18 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="io.github.sckzw.aanotifier.MessageReadReceiver">
+        <receiver android:name=".MessageReadReceiver">
             <intent-filter>
                 <action android:name="io.github.sckzw.aanotifier.ACTION_MESSAGE_READ" />
             </intent-filter>
         </receiver>
-        <receiver android:name="io.github.sckzw.aanotifier.MessageReplyReceiver">
+        <receiver android:name=".MessageReplyReceiver">
             <intent-filter>
                 <action android:name="io.github.sckzw.aanotifier.ACTION_MESSAGE_REPLY" />
             </intent-filter>
         </receiver>
 
-        <activity android:name="io.github.sckzw.aanotifier.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

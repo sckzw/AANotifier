@@ -25,11 +25,12 @@ public class MessagingService extends NotificationListenerService {
     public static final String CONVERSATION_ID = "conversation_id";
     public static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
 
-    private static final String NOTIFICATION_CHANNEL_ID = "io.github.sckzw.aanotifier";
+    private static final String AANOTIFIER_PACKAGE_NAME = "io.github.sckzw.aanotifier";
     private static final String ANDROID_AUTO_PACKAGE_NAME = "com.google.android.projection.gearhead";
     private static final String TAG = MessagingService.class.getSimpleName();
 
     private NotificationManagerCompat mNotificationManager;
+    private PackageManager mPackageManager;
     private boolean mCarMode;
 
     @Override
@@ -39,10 +40,12 @@ public class MessagingService extends NotificationListenerService {
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
             // NotificationManager notificationManager = getSystemService( NotificationManager.class );
             mNotificationManager.createNotificationChannel( new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
+                    AANOTIFIER_PACKAGE_NAME,
                     getString( R.string.app_name ),
                     NotificationManager.IMPORTANCE_MIN ) );
         }
+
+        mPackageManager = getApplicationContext().getPackageManager();
 
         mCarMode = false;
     }
@@ -59,26 +62,55 @@ public class MessagingService extends NotificationListenerService {
         String packageName = sbn.getPackageName();
         Log.d( TAG, "onNotificationPosted: " + packageName );
 
+        if ( packageName.equals( AANOTIFIER_PACKAGE_NAME ) ) {
+            return;
+        }
+
         if ( packageName.equals( ANDROID_AUTO_PACKAGE_NAME ) ) {
             mCarMode = true;
             Log.d( TAG, "Enter Car Mode." );
         }
 
+        /*
+        if ( ! mCarMode ) {
+            return;
+        }
+        */
+
         if ( sbn.isOngoing() ) {
             return;
         }
 
-        if ( ( sbn.getNotification().flags & Notification.FLAG_GROUP_SUMMARY ) != 0 ) {
+        Notification notification = sbn.getNotification();
+
+        if ( ( notification.flags & Notification.FLAG_GROUP_SUMMARY ) != 0 ) {
             return;
         }
 
-        if ( packageName.equals( "io.github.sckzw.aanotifier" ) ) {
-            return;
+        if ( notification.extras != null ) {
+            if ( notification.extras.containsKey( "android.car.EXTENSIONS" ) ) {
+                return;
+            }
+            if ( notification.extras.containsKey( "android.mediaSession" ) ) {
+                return;
+            }
         }
 
-        // if ( mCarMode ) {
+        /*
+        try {
+            ApplicationInfo appInfo = mPackageManager.getApplicationInfo( packageName, PackageManager.GET_META_DATA );
+
+            if ( appInfo.metaData != null && appInfo.metaData.containsKey( "com.google.android.gms.car.application" ) ) {
+                return;
+            }
+        }
+        catch ( PackageManager.NameNotFoundException ex ) {
+            Log.d( TAG, ex.getMessage() );
+            return;
+        }
+        */
+
         sendNotification( sbn );
-        // }
     }
 
     @Override
@@ -163,7 +195,7 @@ public class MessagingService extends NotificationListenerService {
         unreadConversationBuilder.addMessage( text );
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( appContext )
-                .setChannelId( NOTIFICATION_CHANNEL_ID )
+                .setChannelId( AANOTIFIER_PACKAGE_NAME )
                 .setSmallIcon( R.mipmap.ic_launcher )
                 .setLargeIcon( (Bitmap)extras.get( Notification.EXTRA_LARGE_ICON ) )
                 .setContentTitle( title )
