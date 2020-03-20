@@ -37,7 +37,7 @@ public class MessagingService extends NotificationListenerService {
     private NotificationManagerCompat mNotificationManager;
     private boolean mCarMode;
     private boolean mIgnoreOngoingNotification;
-    private boolean mDisplayNotification;
+    private boolean mDisplaySpuriousNotification;
 
     @Override
     public void onCreate() {
@@ -224,7 +224,7 @@ public class MessagingService extends NotificationListenerService {
 
         mNotificationManager.notify( sbn.getKey(), conversationId, builder.build() );
 
-        if ( ! mDisplayNotification ) {
+        if ( !mDisplaySpuriousNotification ) {
             mNotificationManager.cancel( sbn.getKey(), 0 );
         }
     }
@@ -248,8 +248,8 @@ public class MessagingService extends NotificationListenerService {
             if ( intent.getStringExtra( "key" ).equals( "ongoingNotificationIsDisabled" ) ) {
                 mIgnoreOngoingNotification = intent.getBooleanExtra( "value", true );
             }
-            if ( intent.getStringExtra( "key" ).equals( "displayNotification" ) ) {
-                mDisplayNotification = intent.getBooleanExtra( "value", true );
+            if ( intent.getStringExtra( "key" ).equals( "displaySpuriousNotification" ) ) {
+                mDisplaySpuriousNotification = intent.getBooleanExtra( "value", true );
             }
         }
     }

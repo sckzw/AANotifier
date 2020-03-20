@@ -22,11 +22,11 @@
         android:text="@string/disable_ongoing_notification" />
 
     <Switch
-        android:id="@+id/switch_display_the_notification_of_this_app"
+        android:id="@+id/switch_display_spurious_notifications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="?attr/listPreferredItemPaddingLeft"
         android:paddingEnd="?attr/listPreferredItemPaddingRight"
-        android:text="@string/display_the_notification_of_this_app" />
+        android:text="@string/display_spurious_notifications_of_this_app" />
 
 </LinearLayout>

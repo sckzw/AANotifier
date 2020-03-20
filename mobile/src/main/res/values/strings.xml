@@ -2,5 +2,5 @@
     <string name="app_name">Android Auto Notifier</string>
     <string name="open_notification_access">Open \"Notification Access\"</string>
     <string name="disable_ongoing_notification">Disable \"Ongoing\" notification</string>
-    <string name="display_the_notification_of_this_app">Display the notification of this app.</string>
+    <string name="display_spurious_notifications_of_this_app">Display spurious notifications of this app.</string>
 </resources>
