@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -21,6 +24,15 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.setAction( Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS );
                 startActivity( intent );
+            }
+        } );
+        ((Switch)findViewById( R.id.switch_disable_ongoing_notification )).setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged( CompoundButton compoundButton, boolean b ) {
+                Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
+                intent.putExtra( "key", "ongoingNotificationIsDisabled" );
+                intent.putExtra( "value", b );
+                LocalBroadcastManager.getInstance( getApplicationContext() ).sendBroadcast( intent );
             }
         } );
     }

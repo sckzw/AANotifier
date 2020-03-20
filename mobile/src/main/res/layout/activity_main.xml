@@ -16,4 +16,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Switch
+        android:id="@+id/switch_disable_ongoing_notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+        android:paddingRight="?attr/listPreferredItemPaddingRight"
+        android:text="@string/disable_ongoing_notification"
+        tools:layout_editor_absoluteX="167dp"
+        tools:layout_editor_absoluteY="486dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,8 +4,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -18,10 +20,12 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class MessagingService extends NotificationListenerService {
-    public static final String READ_ACTION = "io.github.sckzw.aanotifier.ACTION_MESSAGE_READ";
-    public static final String REPLY_ACTION = "io.github.sckzw.aanotifier.ACTION_MESSAGE_REPLY";
+    public static final String INTENT_ACTION_SET_PREF = "io.github.sckzw.aanotifier.INTENT_ACTION_SET_PREF";
+    public static final String INTENT_ACTION_READ_MESSAGE = "io.github.sckzw.aanotifier.INTENT_ACTION_READ_MESSAGE";
+    public static final String INTENT_ACTION_REPLY_MESSAGE = "io.github.sckzw.aanotifier.INTENT_ACTION_REPLY_MESSAGE";
     public static final String CONVERSATION_ID = "conversation_id";
     public static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
 
@@ -29,12 +33,18 @@ public class MessagingService extends NotificationListenerService {
     private static final String ANDROID_AUTO_PACKAGE_NAME = "com.google.android.projection.gearhead";
     private static final String TAG = MessagingService.class.getSimpleName();
 
+    private MessagingServiceBroadcastReceiver mMessagingServiceBroadcastReceiver;
     private NotificationManagerCompat mNotificationManager;
-    private PackageManager mPackageManager;
     private boolean mCarMode;
+    private boolean mOngoingIsDisabled;
 
     @Override
     public void onCreate() {
+        mMessagingServiceBroadcastReceiver = new MessagingServiceBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction( INTENT_ACTION_SET_PREF );
+        LocalBroadcastManager.getInstance( getApplicationContext() ).registerReceiver( mMessagingServiceBroadcastReceiver, intentFilter );
+
         mNotificationManager = NotificationManagerCompat.from( getApplicationContext() );
 
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
@@ -45,9 +55,15 @@ public class MessagingService extends NotificationListenerService {
                     NotificationManager.IMPORTANCE_MIN ) );
         }
 
-        mPackageManager = getApplicationContext().getPackageManager();
-
         mCarMode = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if ( mMessagingServiceBroadcastReceiver != null ) {
+            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver( mMessagingServiceBroadcastReceiver );
+        }
     }
 
     @Override
@@ -77,7 +93,7 @@ public class MessagingService extends NotificationListenerService {
         }
         */
 
-        if ( sbn.isOngoing() ) {
+        if ( mOngoingIsDisabled && sbn.isOngoing() ) {
             return;
         }
 
@@ -171,7 +187,7 @@ public class MessagingService extends NotificationListenerService {
                 appContext,
                 conversationId,
                 new Intent( appContext, MessageReadReceiver.class )
-                        .setAction( READ_ACTION )
+                        .setAction( INTENT_ACTION_READ_MESSAGE )
                         .putExtra( CONVERSATION_ID, conversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
                 PendingIntent.FLAG_UPDATE_CURRENT );
@@ -180,7 +196,7 @@ public class MessagingService extends NotificationListenerService {
                 appContext,
                 conversationId,
                 new Intent( appContext, MessageReplyReceiver.class )
-                        .setAction( REPLY_ACTION )
+                        .setAction( INTENT_ACTION_REPLY_MESSAGE )
                         .putExtra( CONVERSATION_ID, conversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
                 PendingIntent.FLAG_UPDATE_CURRENT );
@@ -219,5 +235,14 @@ public class MessagingService extends NotificationListenerService {
         }
 
         return (String)( ai != null ? pm.getApplicationLabel( ai ) : "" );
+    }
+
+    private class MessagingServiceBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive( Context context, Intent intent ) {
+            if ( intent.getStringExtra( "key" ).equals( "ongoingNotificationIsDisabled" ) ) {
+                mOngoingIsDisabled = intent.getBooleanExtra( "value", true );
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ public class MessageReplyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive( Context context, Intent intent ) {
-        if ( MessagingService.REPLY_ACTION.equals( intent.getAction() ) ) {
+        if ( MessagingService.INTENT_ACTION_REPLY_MESSAGE.equals( intent.getAction() ) ) {
             int conversationId = intent.getIntExtra( MessagingService.CONVERSATION_ID, -1 );
             if ( conversationId != -1 ) {
                 Log.d( TAG, "Conversation " + conversationId + " reply action." );

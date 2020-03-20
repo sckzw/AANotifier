@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Android Auto Notifier</string>
     <string name="open_notification_access">Open \"Notification Access\"</string>
+    <string name="disable_ongoing_notification">Disable \"Ongoing\" Notification</string>
 </resources>
