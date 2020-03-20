@@ -35,6 +35,15 @@ public class MainActivity extends AppCompatActivity {
                 LocalBroadcastManager.getInstance( getApplicationContext() ).sendBroadcast( intent );
             }
         } );
+        ((Switch)findViewById( R.id.switch_display_the_notification_of_this_app )).setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged( CompoundButton compoundButton, boolean b ) {
+                Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
+                intent.putExtra( "key", "displayNotification" );
+                intent.putExtra( "value", b );
+                LocalBroadcastManager.getInstance( getApplicationContext() ).sendBroadcast( intent );
+            }
+        } );
     }
 
     private boolean isRunning() {

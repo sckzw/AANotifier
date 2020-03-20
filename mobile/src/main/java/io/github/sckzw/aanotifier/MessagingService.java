@@ -36,7 +36,8 @@ public class MessagingService extends NotificationListenerService {
     private MessagingServiceBroadcastReceiver mMessagingServiceBroadcastReceiver;
     private NotificationManagerCompat mNotificationManager;
     private boolean mCarMode;
-    private boolean mOngoingIsDisabled;
+    private boolean mIgnoreOngoingNotification;
+    private boolean mDisplayNotification;
 
     @Override
     public void onCreate() {
@@ -93,7 +94,7 @@ public class MessagingService extends NotificationListenerService {
         }
         */
 
-        if ( mOngoingIsDisabled && sbn.isOngoing() ) {
+        if ( mIgnoreOngoingNotification && sbn.isOngoing() ) {
             return;
         }
 
@@ -222,6 +223,10 @@ public class MessagingService extends NotificationListenerService {
                         .setUnreadConversation( unreadConversationBuilder.build() ) );
 
         mNotificationManager.notify( sbn.getKey(), conversationId, builder.build() );
+
+        if ( ! mDisplayNotification ) {
+            mNotificationManager.cancel( sbn.getKey(), 0 );
+        }
     }
 
     private String getApplicationName( String packageName ) {
@@ -241,7 +246,10 @@ public class MessagingService extends NotificationListenerService {
         @Override
         public void onReceive( Context context, Intent intent ) {
             if ( intent.getStringExtra( "key" ).equals( "ongoingNotificationIsDisabled" ) ) {
-                mOngoingIsDisabled = intent.getBooleanExtra( "value", true );
+                mIgnoreOngoingNotification = intent.getBooleanExtra( "value", true );
+            }
+            if ( intent.getStringExtra( "key" ).equals( "displayNotification" ) ) {
+                mDisplayNotification = intent.getBooleanExtra( "value", true );
             }
         }
     }
