@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Android Auto 通知</string>
     <string name="open_notification_access">\"通知へのアクセス\"を開く。</string>
-    <string name="disable_ongoing_notification">\"実行中\"通知を無効にする。</string>
+    <string name="ignore_ongoing_notification">\"実行中\"の通知を無視する。</string>
     <string name="display_spurious_notifications_of_this_app">このアプリの擬似的な通知を表示する。</string>
 </resources>

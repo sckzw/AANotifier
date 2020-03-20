@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity( intent );
             }
         } );
-        ((Switch)findViewById( R.id.switch_disable_ongoing_notification )).setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+        ((Switch)findViewById( R.id.switch_ignore_ongoing_notification )).setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged( CompoundButton compoundButton, boolean b ) {
                 Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
