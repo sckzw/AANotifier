@@ -1,6 +1,15 @@
 <resources>
     <string name="app_name">Android Auto Notifier</string>
-    <string name="open_notification_access">Open \"Notification Access\"</string>
-    <string name="ignore_ongoing_notification">Ignore \"Ongoing\" notification</string>
-    <string name="display_spurious_notifications_of_this_app">Display spurious notifications of this app.</string>
+    <string name="pref_notification_access_title">Notification Access</string>
+    <string name="pref_spurious_notification_summary">Display spurious notifications of this app.</string>
+    <string name="pref_ongoing_notification_title">Ongoing notification</string>
+    <string name="pref_app_list_title">Application list</string>
+    <string name="pref_car_extender_notification_title">Car extender notification</string>
+    <string name="pref_car_extender_notification_summary">Display car extender notifications.</string>
+    <string name="pref_ongoing_notification_summary">Display ongoing notifications.</string>
+    <string name="pref_media_session_notification_title">Media session notification</string>
+    <string name="pref_media_session_notification_summary">Display media session notifications.</string>
+    <string name="pref_spurious_notification_title">Spurious Notification</string>
+    <string name="pref_app_list_summary">Display application list.</string>
+    <string name="pref_notification_access_summary">Display notification access settings.</string>
 </resources>

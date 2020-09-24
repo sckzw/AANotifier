@@ -3,47 +3,56 @@ package io.github.sckzw.aanotifier;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    SharedPreferences mSharedPreferences;
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
-        findViewById( R.id.button_notification_access ).setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick( View view ) {
-                Intent intent = new Intent();
-                intent.setAction( Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS );
-                startActivity( intent );
-            }
-        } );
-        ((Switch)findViewById( R.id.switch_ignore_ongoing_notification )).setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged( CompoundButton compoundButton, boolean b ) {
-                Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
-                intent.putExtra( "key", "ongoingNotificationIsDisabled" );
-                intent.putExtra( "value", b );
-                LocalBroadcastManager.getInstance( getApplicationContext() ).sendBroadcast( intent );
-            }
-        } );
-        ((Switch)findViewById( R.id.switch_display_spurious_notifications )).setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged( CompoundButton compoundButton, boolean b ) {
-                Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
-                intent.putExtra( "key", "displaySpuriousNotification" );
-                intent.putExtra( "value", b );
-                LocalBroadcastManager.getInstance( getApplicationContext() ).sendBroadcast( intent );
-            }
-        } );
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace( R.id.layout_settings, new SettingsFragment() )
+                .commit();
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+    }
+
+    @Override
+    public void onSharedPreferenceChanged( SharedPreferences pref, String key ) {
+        Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
+        intent.putExtra( "key", key );
+        intent.putExtra( "value", pref.getBoolean( key, false ) );
+        LocalBroadcastManager.getInstance( getApplicationContext() ).sendBroadcast( intent );
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSharedPreferences.registerOnSharedPreferenceChangeListener( this );
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener( this );
+    }
+
+    public static class SettingsFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences( Bundle savedInstanceState, String rootKey ) {
+            setPreferencesFromResource( R.xml.root_preferences, rootKey );
+        }
     }
 
     private boolean isRunning() {

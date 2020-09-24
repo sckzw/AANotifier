@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Android Auto 通知</string>
-    <string name="open_notification_access">\"通知へのアクセス\"を開く。</string>
-    <string name="ignore_ongoing_notification">\"実行中\"の通知を無視する。</string>
-    <string name="display_spurious_notifications_of_this_app">このアプリの擬似的な通知を表示する。</string>
+    <string name="pref_ongoing_notification_title">継続中通知</string>
+    <string name="pref_ongoing_notification_summary">アプリの継続中通知を表示する。</string>
+    <string name="pref_car_extender_notification_title">車載拡張通知</string>
+    <string name="pref_car_extender_notification_summary">アプリの車載拡張通知を表示する。</string>
+    <string name="pref_media_session_notification_title">メディアセッション通知</string>
+    <string name="pref_media_session_notification_summary">アプリのメディアセッション通知を表示する。</string>
+    <string name="pref_spurious_notification_title">疑似通知</string>
+    <string name="pref_spurious_notification_summary">このアプリの疑似的な通知を表示する。</string>
+    <string name="pref_app_list_title">アプリ一覧</string>
+    <string name="pref_app_list_summary">アプリ一覧を表示する。</string>
+    <string name="pref_notification_access_title">通知へのアクセス</string>
+    <string name="pref_notification_access_summary">通知へのアクセスの設定を表示する。</string>
 </resources>

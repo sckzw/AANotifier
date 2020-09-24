@@ -5,13 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".AppListActivity">
 
-    <FrameLayout
-        android:id="@+id/layout_settings"
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@+id/app_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </FrameLayout>
-
+    </ListView>
 </LinearLayout>

@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
@@ -36,8 +37,10 @@ public class MessagingService extends NotificationListenerService {
     private MessagingServiceBroadcastReceiver mMessagingServiceBroadcastReceiver;
     private NotificationManagerCompat mNotificationManager;
     private boolean mCarMode;
-    private boolean mIgnoreOngoingNotification;
-    private boolean mDisplaySpuriousNotification;
+    private boolean mOngoingNotification;
+    private boolean mSpuriousNotification;
+    private boolean mCarExtenderNotification;
+    private boolean mMediaSessionNotification;
 
     @Override
     public void onCreate() {
@@ -94,7 +97,7 @@ public class MessagingService extends NotificationListenerService {
         }
         */
 
-        if ( mIgnoreOngoingNotification && sbn.isOngoing() ) {
+        if ( !mOngoingNotification && sbn.isOngoing() ) {
             return;
         }
 
@@ -105,10 +108,10 @@ public class MessagingService extends NotificationListenerService {
         }
 
         if ( notification.extras != null ) {
-            if ( notification.extras.containsKey( "android.car.EXTENSIONS" ) ) {
+            if ( !mCarExtenderNotification && notification.extras.containsKey( "android.car.EXTENSIONS" ) ) {
                 return;
             }
-            if ( notification.extras.containsKey( "android.mediaSession" ) ) {
+            if ( !mMediaSessionNotification && notification.extras.containsKey( "android.mediaSession" ) ) {
                 return;
             }
         }
@@ -224,8 +227,14 @@ public class MessagingService extends NotificationListenerService {
 
         mNotificationManager.notify( sbn.getKey(), conversationId, builder.build() );
 
-        if ( !mDisplaySpuriousNotification ) {
-            mNotificationManager.cancel( sbn.getKey(), 0 );
+        if ( !mSpuriousNotification ) {
+            final String key = sbn.getKey();
+            new Handler().postDelayed( new Runnable() {
+                @Override
+                public void run() {
+                    mNotificationManager.cancel( key, 0 );
+                }
+            }, 1000 );
         }
     }
 
@@ -245,11 +254,17 @@ public class MessagingService extends NotificationListenerService {
     private class MessagingServiceBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive( Context context, Intent intent ) {
-            if ( intent.getStringExtra( "key" ).equals( "ongoingNotificationIsDisabled" ) ) {
-                mIgnoreOngoingNotification = intent.getBooleanExtra( "value", true );
+            if ( intent.getStringExtra( "key" ).equals( "ongoing_notification" ) ) {
+                mOngoingNotification = intent.getBooleanExtra( "value", true );
             }
-            if ( intent.getStringExtra( "key" ).equals( "displaySpuriousNotification" ) ) {
-                mDisplaySpuriousNotification = intent.getBooleanExtra( "value", true );
+            if ( intent.getStringExtra( "key" ).equals( "spurious_notification" ) ) {
+                mSpuriousNotification = intent.getBooleanExtra( "value", true );
+            }
+            if ( intent.getStringExtra( "key" ).equals( "media_session_notification" ) ) {
+                mMediaSessionNotification = intent.getBooleanExtra( "value", true );
+            }
+            if ( intent.getStringExtra( "key" ).equals( "car_extender_notification" ) ) {
+                mCarExtenderNotification = intent.getBooleanExtra( "value", true );
             }
         }
     }
