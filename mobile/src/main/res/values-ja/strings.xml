@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Android Auto 通知</string>
-    <string name="pref_ongoing_notification_title">継続中通知</string>
-    <string name="pref_ongoing_notification_summary">アプリの継続中通知を表示する。</string>
-    <string name="pref_car_extender_notification_title">車載拡張通知</string>
-    <string name="pref_car_extender_notification_summary">アプリの車載拡張通知を表示する。</string>
-    <string name="pref_media_session_notification_title">メディアセッション通知</string>
-    <string name="pref_media_session_notification_summary">アプリのメディアセッション通知を表示する。</string>
-    <string name="pref_spurious_notification_title">疑似通知</string>
-    <string name="pref_spurious_notification_summary">このアプリの疑似的な通知を表示する。</string>
+
+    <string name="pref_android_auto_notification_title">Android Auto通知</string>
+    <string name="pref_android_auto_notification_summary">この端末の通知をAndroid Autoへ通知する。</string>
     <string name="pref_app_list_title">アプリ一覧</string>
-    <string name="pref_app_list_summary">アプリ一覧を表示する。</string>
+    <string name="pref_app_list_summary">Android Autoへ通知するアプリを選択する。</string>
     <string name="pref_notification_access_title">通知へのアクセス</string>
-    <string name="pref_notification_access_summary">通知へのアクセスの設定を表示する。</string>
+    <string name="pref_notification_access_summary">このアプリの通知へのアクセスを有効にする。</string>
+
+    <string name="pref_car_mode_notification_title">Android Auto連動</string>
+    <string name="pref_car_mode_notification_summary">Android Auto起動時のみ通知を有効にする。</string>
+    <string name="pref_car_extender_notification_title">車載拡張通知</string>
+    <string name="pref_car_extender_notification_summary">車載向けに拡張された通知を有効にする。</string>
+    <string name="pref_media_session_notification_title">メディアセッション通知</string>
+    <string name="pref_media_session_notification_summary">メディアセッションの通知を有効にする。</string>
+    <string name="pref_ongoing_notification_title">実行中通知</string>
+    <string name="pref_ongoing_notification_summary">実行中通知を有効にする。</string>
+    <string name="pref_spurious_notification_title">疑似通知</string>
+    <string name="pref_spurious_notification_summary">このアプリの疑似通知を表示する。</string>
 </resources>

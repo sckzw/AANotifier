@@ -2,11 +2,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="通知">
+    <PreferenceCategory app:title="設定">
         <SwitchPreferenceCompat
-            app:key="ongoing_notification"
-            app:title="@string/pref_ongoing_notification_title"
-            app:summary="@string/pref_ongoing_notification_summary" />
+            app:key="android_auto_notification"
+            app:title="@string/pref_android_auto_notification_title"
+            app:summary="@string/pref_android_auto_notification_summary" />
+        <Preference
+            app:title="@string/pref_app_list_title"
+            app:summary="@string/pref_app_list_summary">
+            <intent
+                android:targetPackage="io.github.sckzw.aanotifier"
+                android:targetClass="io.github.sckzw.aanotifier.AppListActivity" />
+        </Preference>
+        <Preference
+            app:title="@string/pref_notification_access_title"
+            app:summary="@string/pref_notification_access_summary">
+            <intent android:action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" />
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="テスト用設定">
+        <SwitchPreferenceCompat
+            app:key="car_mode_notification"
+            app:title="@string/pref_car_mode_notification_title"
+            app:summary="@string/pref_car_mode_notification_summary" />
         <SwitchPreferenceCompat
             app:key="car_extender_notification"
             app:title="@string/pref_car_extender_notification_title"
@@ -16,24 +35,12 @@
             app:title="@string/pref_media_session_notification_title"
             app:summary="@string/pref_media_session_notification_summary"/>
         <SwitchPreferenceCompat
-            app:key="in_car_notification"
-            app:title="Android Auto通知"
-            app:summary="Android Autoヘッドユニット接続時のみ通知する。" />
+            app:key="ongoing_notification"
+            app:title="@string/pref_ongoing_notification_title"
+            app:summary="@string/pref_ongoing_notification_summary" />
         <SwitchPreferenceCompat
             app:key="spurious_notification"
             app:title="@string/pref_spurious_notification_title"
             app:summary="@string/pref_spurious_notification_summary" />
-        <Preference
-            app:title="@string/pref_app_list_title"
-            app:summary="@string/pref_app_list_summary">
-            <intent
-                android:targetPackage="io.github.sckzw.aanotifier"
-                android:targetClass="io.github.sckzw.aanotifier.AppListActivity"/>
-        </Preference>
-        <Preference
-            app:title="@string/pref_notification_access_title"
-            app:summary="@string/pref_notification_access_summary">
-            <intent android:action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" />
-        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

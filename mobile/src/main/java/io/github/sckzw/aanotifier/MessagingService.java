@@ -4,12 +4,14 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,8 @@ import android.os.Handler;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
+
+import net.grandcentrix.tray.AppPreferences;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -31,42 +35,54 @@ public class MessagingService extends NotificationListenerService {
     public static final String EXTRA_VOICE_REPLY = "extra_voice_reply";
 
     private static final String AANOTIFIER_PACKAGE_NAME = "io.github.sckzw.aanotifier";
-    private static final String ANDROID_AUTO_PACKAGE_NAME = "com.google.android.projection.gearhead";
     private static final String TAG = MessagingService.class.getSimpleName();
 
-    private MessagingServiceBroadcastReceiver mMessagingServiceBroadcastReceiver;
+    private PreferenceBroadcastReceiver mPreferenceBroadcastReceiver;
     private NotificationManagerCompat mNotificationManager;
-    private boolean mCarMode;
-    private boolean mOngoingNotification;
-    private boolean mSpuriousNotification;
+    private UiModeManager mUiModeManager;
+
+    private boolean mAndroidAutoNotification;
+    private boolean mCarModeNotification;
     private boolean mCarExtenderNotification;
     private boolean mMediaSessionNotification;
+    private boolean mOngoingNotification;
+    private boolean mSpuriousNotification;
 
     @Override
     public void onCreate() {
-        mMessagingServiceBroadcastReceiver = new MessagingServiceBroadcastReceiver();
+        Context context = getApplicationContext();
+
+        mPreferenceBroadcastReceiver = new PreferenceBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction( INTENT_ACTION_SET_PREF );
-        LocalBroadcastManager.getInstance( getApplicationContext() ).registerReceiver( mMessagingServiceBroadcastReceiver, intentFilter );
+        LocalBroadcastManager.getInstance( context ).registerReceiver( mPreferenceBroadcastReceiver, intentFilter );
 
-        mNotificationManager = NotificationManagerCompat.from( getApplicationContext() );
+        mNotificationManager = NotificationManagerCompat.from( context );
 
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ) {
-            // NotificationManager notificationManager = getSystemService( NotificationManager.class );
             mNotificationManager.createNotificationChannel( new NotificationChannel(
                     AANOTIFIER_PACKAGE_NAME,
                     getString( R.string.app_name ),
                     NotificationManager.IMPORTANCE_MIN ) );
         }
 
-        mCarMode = false;
+        mUiModeManager = (UiModeManager)context.getSystemService( Context.UI_MODE_SERVICE );
+
+        AppPreferences appPreferences = new AppPreferences( context );
+
+        mAndroidAutoNotification  = appPreferences.getBoolean( "android_auto_notification" , true  );
+        mCarModeNotification      = appPreferences.getBoolean( "car_mode_notification"     , true  );
+        mCarExtenderNotification  = appPreferences.getBoolean( "car_extender_notification" , false );
+        mMediaSessionNotification = appPreferences.getBoolean( "media_session_notification", false );
+        mOngoingNotification      = appPreferences.getBoolean( "ongoing_notification"      , false );
+        mSpuriousNotification     = appPreferences.getBoolean( "spurious_notification"     , false );
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if ( mMessagingServiceBroadcastReceiver != null ) {
-            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver( mMessagingServiceBroadcastReceiver );
+        if ( mPreferenceBroadcastReceiver != null ) {
+            LocalBroadcastManager.getInstance( getApplicationContext() ).unregisterReceiver( mPreferenceBroadcastReceiver );
         }
     }
 
@@ -86,16 +102,13 @@ public class MessagingService extends NotificationListenerService {
             return;
         }
 
-        if ( packageName.equals( ANDROID_AUTO_PACKAGE_NAME ) ) {
-            mCarMode = true;
-            Log.d( TAG, "Enter Car Mode." );
-        }
-
-        /*
-        if ( ! mCarMode ) {
+        if ( !mAndroidAutoNotification ) {
             return;
         }
-        */
+
+        if ( mCarModeNotification && mUiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_CAR ) {
+            return;
+        }
 
         if ( !mOngoingNotification && sbn.isOngoing() ) {
             return;
@@ -116,20 +129,6 @@ public class MessagingService extends NotificationListenerService {
             }
         }
 
-        /*
-        try {
-            ApplicationInfo appInfo = mPackageManager.getApplicationInfo( packageName, PackageManager.GET_META_DATA );
-
-            if ( appInfo.metaData != null && appInfo.metaData.containsKey( "com.google.android.gms.car.application" ) ) {
-                return;
-            }
-        }
-        catch ( PackageManager.NameNotFoundException ex ) {
-            Log.d( TAG, ex.getMessage() );
-            return;
-        }
-        */
-
         sendNotification( sbn );
     }
 
@@ -139,11 +138,6 @@ public class MessagingService extends NotificationListenerService {
 
         String packageName = sbn.getPackageName();
         Log.d( TAG, "onNotificationRemoved: " + packageName );
-
-        if ( packageName.equals( ANDROID_AUTO_PACKAGE_NAME ) ) {
-            mCarMode = false;
-            Log.d( TAG, "Exit Car Mode." );
-        }
 
         mNotificationManager.cancel( sbn.getKey(), 0 );
     }
@@ -251,20 +245,34 @@ public class MessagingService extends NotificationListenerService {
         return (String)( ai != null ? pm.getApplicationLabel( ai ) : "" );
     }
 
-    private class MessagingServiceBroadcastReceiver extends BroadcastReceiver {
+    private class PreferenceBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive( Context context, Intent intent ) {
-            if ( intent.getStringExtra( "key" ).equals( "ongoing_notification" ) ) {
-                mOngoingNotification = intent.getBooleanExtra( "value", true );
+            String key = intent.getStringExtra( "key" );
+
+            if ( key == null ) {
+                return;
             }
-            if ( intent.getStringExtra( "key" ).equals( "spurious_notification" ) ) {
-                mSpuriousNotification = intent.getBooleanExtra( "value", true );
-            }
-            if ( intent.getStringExtra( "key" ).equals( "media_session_notification" ) ) {
-                mMediaSessionNotification = intent.getBooleanExtra( "value", true );
-            }
-            if ( intent.getStringExtra( "key" ).equals( "car_extender_notification" ) ) {
-                mCarExtenderNotification = intent.getBooleanExtra( "value", true );
+
+            switch ( key ) {
+                case "android_auto_notification":
+                    mAndroidAutoNotification = intent.getBooleanExtra( "value", true );
+                    break;
+                case "car_mode_notification":
+                    mCarModeNotification = intent.getBooleanExtra( "value", true );
+                    break;
+                case "car_extender_notification":
+                    mCarExtenderNotification = intent.getBooleanExtra( "value", false );
+                    break;
+                case "media_session_notification":
+                    mMediaSessionNotification = intent.getBooleanExtra( "value", false );
+                    break;
+                case "ongoing_notification":
+                    mOngoingNotification = intent.getBooleanExtra( "value", false );
+                    break;
+                case "spurious_notification":
+                    mSpuriousNotification = intent.getBooleanExtra( "value", false );
+                    break;
             }
         }
     }
