@@ -19,6 +19,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -92,7 +94,7 @@ public class AppListActivity extends AppCompatActivity {
 
                 textAppName.setText( appListItem.appName );
                 textPkgName.setText( appListItem.pkgName );
-                imageAppIcon.setImageDrawable( appListItem.appIcon );
+                //imageAppIcon.setImageDrawable( appListItem.appIcon );
                 switchIsEnabled.setChecked( appListItem.isEnabled );
             }
 
@@ -116,12 +118,19 @@ public class AppListActivity extends AppCompatActivity {
             for ( ApplicationInfo appInfo : appInfoList ) {
                 mAppList.add( new AppListItem(
                         appInfo.loadLabel( pm ).toString(),
-                        appInfo.packageName,
-                        appInfo.loadIcon( pm )
+                        appInfo.packageName/*,
+                        appInfo.loadIcon( pm ) */
                 ) );
 
                 mProgressBar.setProgress( 100 * ( ++appCnt ) / appNum );
             }
+
+            Collections.sort( mAppList, new Comparator< AppListItem >() {
+                @Override
+                public int compare( AppListItem appListItem1, AppListItem appListItem2 ) {
+                    return appListItem1.appName.compareTo( appListItem2.appName );
+                }
+            } );
 
             return null;
         }

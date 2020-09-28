@@ -11,7 +11,8 @@
         android:id="@+id/progress_bar"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:minHeight="4dip" />
 
     <ListView
         android:id="@+id/app_list_view"
