@@ -13,21 +13,12 @@ import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     SharedPreferences mSharedPreferences;
-    AppPreferences mAppPreferences;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
-        mAppPreferences = new AppPreferences( getApplicationContext() );
-
-        mSharedPreferences.edit().putBoolean( "android_auto_notification" , mAppPreferences.getBoolean( "android_auto_notification" , true  ) ).apply();
-        mSharedPreferences.edit().putBoolean( "car_mode_notification"     , mAppPreferences.getBoolean( "car_mode_notification"     , true  ) ).apply();
-        mSharedPreferences.edit().putBoolean( "car_extender_notification" , mAppPreferences.getBoolean( "car_extender_notification" , false ) ).apply();
-        mSharedPreferences.edit().putBoolean( "media_session_notification", mAppPreferences.getBoolean( "media_session_notification", false ) ).apply();
-        mSharedPreferences.edit().putBoolean( "ongoing_notification"      , mAppPreferences.getBoolean( "ongoing_notification"      , false ) ).apply();
-        mSharedPreferences.edit().putBoolean( "spurious_notification"     , mAppPreferences.getBoolean( "spurious_notification"     , false ) ).apply();
 
         setContentView( R.layout.activity_main );
 
@@ -47,8 +38,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public void onSharedPreferenceChanged( SharedPreferences pref, String key ) {
         boolean value = pref.getBoolean( key, false );
-
-        mAppPreferences.put( key, value );
 
         Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
         intent.putExtra( "key", key );

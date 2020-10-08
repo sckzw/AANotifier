@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -20,12 +21,11 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import net.grandcentrix.tray.AppPreferences;
-
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 
 public class MessagingService extends NotificationListenerService {
     public static final String INTENT_ACTION_SET_PREF = "io.github.sckzw.aanotifier.INTENT_ACTION_SET_PREF";
@@ -68,14 +68,14 @@ public class MessagingService extends NotificationListenerService {
 
         mUiModeManager = (UiModeManager)context.getSystemService( Context.UI_MODE_SERVICE );
 
-        AppPreferences appPreferences = new AppPreferences( context );
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
 
-        mAndroidAutoNotification  = appPreferences.getBoolean( "android_auto_notification" , true  );
-        mCarModeNotification      = appPreferences.getBoolean( "car_mode_notification"     , true  );
-        mCarExtenderNotification  = appPreferences.getBoolean( "car_extender_notification" , false );
-        mMediaSessionNotification = appPreferences.getBoolean( "media_session_notification", false );
-        mOngoingNotification      = appPreferences.getBoolean( "ongoing_notification"      , false );
-        mSpuriousNotification     = appPreferences.getBoolean( "spurious_notification"     , false );
+        mAndroidAutoNotification  = sharedPreferences.getBoolean( "android_auto_notification" , true  );
+        mCarModeNotification      = sharedPreferences.getBoolean( "car_mode_notification"     , true  );
+        mCarExtenderNotification  = sharedPreferences.getBoolean( "car_extender_notification" , false );
+        mMediaSessionNotification = sharedPreferences.getBoolean( "media_session_notification", false );
+        mOngoingNotification      = sharedPreferences.getBoolean( "ongoing_notification"      , false );
+        mSpuriousNotification     = sharedPreferences.getBoolean( "spurious_notification"     , false );
     }
 
     @Override
