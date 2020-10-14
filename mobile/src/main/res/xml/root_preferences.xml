@@ -7,6 +7,7 @@
             app:key="android_auto_notification"
             app:title="@string/pref_android_auto_notification_title"
             app:summary="@string/pref_android_auto_notification_summary"
+            app:defaultValue="true"
             app:iconSpaceReserved="false" />
 
         <Preference
@@ -31,6 +32,7 @@
             app:key="car_mode_notification"
             app:title="@string/pref_car_mode_notification_title"
             app:summary="@string/pref_car_mode_notification_summary"
+            app:defaultValue="true"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             app:key="car_extender_notification"
