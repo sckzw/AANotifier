@@ -41,6 +41,7 @@ public class MessagingService extends NotificationListenerService {
     private NotificationManagerCompat mNotificationManager;
     private UiModeManager mUiModeManager;
 
+    private String  mAvailableAppList;
     private boolean mAndroidAutoNotification;
     private boolean mCarModeNotification;
     private boolean mCarExtenderNotification;
@@ -70,6 +71,7 @@ public class MessagingService extends NotificationListenerService {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
 
+        mAvailableAppList         = sharedPreferences.getString ( "available_app_list"        , ""    );
         mAndroidAutoNotification  = sharedPreferences.getBoolean( "android_auto_notification" , true  );
         mCarModeNotification      = sharedPreferences.getBoolean( "car_mode_notification"     , true  );
         mCarExtenderNotification  = sharedPreferences.getBoolean( "car_extender_notification" , false );
@@ -111,6 +113,10 @@ public class MessagingService extends NotificationListenerService {
         }
 
         if ( !mOngoingNotification && sbn.isOngoing() ) {
+            return;
+        }
+
+        if ( !mAvailableAppList.contains( packageName ) ) {
             return;
         }
 
@@ -255,6 +261,9 @@ public class MessagingService extends NotificationListenerService {
             }
 
             switch ( key ) {
+                case "available_app_list":
+                    mAvailableAppList = intent.getStringExtra( "value" );
+                    break;
                 case "android_auto_notification":
                     mAndroidAutoNotification = intent.getBooleanExtra( "value", true );
                     break;

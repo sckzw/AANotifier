@@ -1,6 +1,7 @@
 package io.github.sckzw.aanotifier;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -21,38 +22,53 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 public class AppListActivity extends AppCompatActivity {
-    private List< AppListItem > mAppList = new ArrayList< AppListItem >();
-    SharedPreferences mSharedPreferences;
+    private static final String PREF_KEY_AVAILABLE_APP_LIST = "available_app_list";
+    private final List< AppListItem > mAppList = new ArrayList<>();
+    private final HashMap< Integer, String > mAvailableAppList = new HashMap<>();
+    private final PackageManager mPackageManager = getApplicationContext().getPackageManager();;
+    private final SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_app_list );
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
         new LoadAppListTask().execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        String availableAppList = String.join( ";", mAvailableAppList.values() );
+
+        mSharedPreferences.edit().putString( PREF_KEY_AVAILABLE_APP_LIST, availableAppList ).apply();
+
+        Intent intent = new Intent( MessagingService.INTENT_ACTION_SET_PREF );
+        intent.putExtra( "key", PREF_KEY_AVAILABLE_APP_LIST );
+        intent.putExtra( "value", availableAppList );
+        LocalBroadcastManager.getInstance( getApplicationContext() ).sendBroadcast( intent );
     }
 
     private static class AppListItem {
         String appName;
         String pkgName;
         Drawable appIcon;
-        boolean isEnabled;
+        boolean isAvailable;
 
-        AppListItem( String appName, String pkgName ) {
-            this.appName = appName;
+        AppListItem( String pkgName, String appName, Drawable appIcon, boolean isAvailable ) {
             this.pkgName = pkgName;
-        }
-
-        AppListItem( String appName, String pkgName, Drawable appIcon ) {
             this.appName = appName;
-            this.pkgName = pkgName;
             this.appIcon = appIcon;
+            this.isAvailable = isAvailable;
         }
     }
 
@@ -87,15 +103,32 @@ public class AppListActivity extends AppCompatActivity {
             AppListItem appListItem = (AppListItem)getItem( position );
 
             if ( appListItem != null ) {
-                imageAppIcon = listItemView.findViewById( R.id.image_app_icon );
-                textAppName = listItemView.findViewById( R.id.text_app_name );
-                textPkgName = listItemView.findViewById( R.id.text_pkg_name );
-                switchIsEnabled = listItemView.findViewById( ( R.id.switch_is_enabled ) );
+                imageAppIcon    = listItemView.findViewById( R.id.image_app_icon );
+                textAppName     = listItemView.findViewById( R.id.text_app_name );
+                textPkgName     = listItemView.findViewById( R.id.text_pkg_name );
+                switchIsEnabled = listItemView.findViewById( R.id.switch_is_enabled );
 
-                textAppName.setText( appListItem.appName );
+                if ( appListItem.appName == null ) {
+                    try {
+                        ApplicationInfo applicationInfo = mPackageManager.getApplicationInfo( appListItem.pkgName, 0 );
+                        appListItem.appName = mPackageManager.getApplicationLabel( applicationInfo ).toString();
+                    } catch ( PackageManager.NameNotFoundException ex ) {
+                        appListItem.appName = "";
+                    }
+                }
+
+                if ( appListItem.appIcon == null ) {
+                    try {
+                        appListItem.appIcon = mPackageManager.getApplicationIcon( appListItem.pkgName );
+                    } catch ( PackageManager.NameNotFoundException ex ) {
+                        appListItem.appIcon = ResourcesCompat.getDrawable( getResources(), android.R.drawable.sym_def_app_icon, null );
+                    }
+                }
+
                 textPkgName.setText( appListItem.pkgName );
-                //imageAppIcon.setImageDrawable( appListItem.appIcon );
-                switchIsEnabled.setChecked( appListItem.isEnabled );
+                textAppName.setText( appListItem.appName );
+                imageAppIcon.setImageDrawable( appListItem.appIcon );
+                switchIsEnabled.setChecked( appListItem.isAvailable );
             }
 
             return listItemView;
@@ -107,20 +140,25 @@ public class AppListActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground( Void... voids ) {
-            PackageManager pm = getApplicationContext().getPackageManager();
-            List< ApplicationInfo > appInfoList = pm.getInstalledApplications( 0 );
-
-            mSharedPreferences.getString( "", "" );
+            List< ApplicationInfo > appInfoList = mPackageManager.getInstalledApplications( 0 );
+            String availableAppList = mSharedPreferences.getString( PREF_KEY_AVAILABLE_APP_LIST, "" );
 
             int appNum = appInfoList.size();
             int appCnt = 0;
 
             for ( ApplicationInfo appInfo : appInfoList ) {
+                boolean isAvailable = availableAppList.contains( appInfo.packageName );
+
                 mAppList.add( new AppListItem(
-                        appInfo.loadLabel( pm ).toString(),
-                        appInfo.packageName/*,
-                        appInfo.loadIcon( pm ) */
+                        appInfo.packageName,
+                        appInfo.loadLabel( mPackageManager ).toString(),
+                        null, // appInfo.loadIcon( mPackageManager )
+                        isAvailable
                 ) );
+
+                if ( isAvailable ) {
+                    mAvailableAppList.put( appCnt, appInfo.packageName );
+                }
 
                 mProgressBar.setProgress( 100 * ( ++appCnt ) / appNum );
             }
@@ -128,7 +166,12 @@ public class AppListActivity extends AppCompatActivity {
             Collections.sort( mAppList, new Comparator< AppListItem >() {
                 @Override
                 public int compare( AppListItem appListItem1, AppListItem appListItem2 ) {
-                    return appListItem1.appName.compareTo( appListItem2.appName );
+                    if ( appListItem1.isAvailable == appListItem2.isAvailable ) {
+                        return appListItem1.appName.compareTo( appListItem2.appName );
+                    }
+                    else {
+                        return appListItem1.isAvailable ? -1: 1;
+                    }
                 }
             } );
 
@@ -139,7 +182,6 @@ public class AppListActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgressBar = findViewById( R.id.progress_bar );
-
         }
 
         @Override
@@ -153,8 +195,15 @@ public class AppListActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick( AdapterView< ? > adapterView, View view, int i, long l ) {
                     AppListItem appListItem = mAppList.get( i );
-                    appListItem.isEnabled = !appListItem.isEnabled;
+                    appListItem.isAvailable = !appListItem.isAvailable;
                     adapter.notifyDataSetChanged();
+
+                    if ( appListItem.isAvailable ) {
+                        mAvailableAppList.put( i, appListItem.pkgName );
+                    }
+                    else {
+                        mAvailableAppList.remove( i );
+                    }
                 }
             } );
 
