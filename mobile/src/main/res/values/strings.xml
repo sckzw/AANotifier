@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Android Auto Notifier</string>
+    <string name="app_name">AANotifier</string>
 
     <string name="pref_category_general_setting_title">General settings</string>
     <string name="pref_android_auto_notification_title">Android Auto notification</string>
