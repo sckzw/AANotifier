@@ -33,7 +33,7 @@ import androidx.preference.PreferenceManager;
 public class AppListActivity extends AppCompatActivity {
     private static final String PREF_KEY_AVAILABLE_APP_LIST = "available_app_list";
     private final List< AppListItem > mAppList = new ArrayList<>();
-    private final HashMap< Integer, String > mAvailableAppList = new HashMap<>();
+    private final HashMap< String, Boolean > mAvailableAppList = new HashMap<>();
     private PackageManager mPackageManager;
     private SharedPreferences mSharedPreferences;
 
@@ -52,7 +52,7 @@ public class AppListActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
 
-        String availableAppList = String.join( ";", mAvailableAppList.values() );
+        String availableAppList = String.join( ";", mAvailableAppList.keySet() );
 
         mSharedPreferences.edit().putString( PREF_KEY_AVAILABLE_APP_LIST, availableAppList ).apply();
 
@@ -161,7 +161,7 @@ public class AppListActivity extends AppCompatActivity {
                 ) );
 
                 if ( isAvailable ) {
-                    mAvailableAppList.put( appCnt, appInfo.packageName );
+                    mAvailableAppList.put( appInfo.packageName, true );
                 }
 
                 mProgressBar.setProgress( 100 * ( ++appCnt ) / appNum );
@@ -203,10 +203,10 @@ public class AppListActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
 
                     if ( appListItem.isAvailable ) {
-                        mAvailableAppList.put( i, appListItem.pkgName );
+                        mAvailableAppList.put( appListItem.pkgName, true );
                     }
                     else {
-                        mAvailableAppList.remove( i );
+                        mAvailableAppList.remove( appListItem.pkgName );
                     }
                 }
             } );
