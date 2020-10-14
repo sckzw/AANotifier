@@ -34,13 +34,17 @@ public class AppListActivity extends AppCompatActivity {
     private static final String PREF_KEY_AVAILABLE_APP_LIST = "available_app_list";
     private final List< AppListItem > mAppList = new ArrayList<>();
     private final HashMap< Integer, String > mAvailableAppList = new HashMap<>();
-    private final PackageManager mPackageManager = getApplicationContext().getPackageManager();;
-    private final SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+    private PackageManager mPackageManager;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_app_list );
+
+        mPackageManager = getApplicationContext().getPackageManager();;
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+
         new LoadAppListTask().execute();
     }
 
