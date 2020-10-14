@@ -1,19 +1,23 @@
 <resources>
     <string name="app_name">Android Auto Notifier</string>
-    <string name="pref_notification_access_title">Notification Access</string>
-    <string name="pref_spurious_notification_summary">Display spurious notifications of this app.</string>
-    <string name="pref_ongoing_notification_title">Ongoing notification</string>
+
+    <string name="pref_category_general_setting_title">General settings</string>
+    <string name="pref_android_auto_notification_title">Android Auto notification</string>
+    <string name="pref_android_auto_notification_summary">Notify Android Auto of this device notifications.</string>
     <string name="pref_app_list_title">Application list</string>
+    <string name="pref_app_list_summary">Select the app to notify Android Auto.</string>
+    <string name="pref_notification_access_title">Notification access</string>
+    <string name="pref_notification_access_summary">Notification access settings.</string>
+
+    <string name="pref_category_test_setting_title">Test settings</string>
+    <string name="pref_car_mode_notification_title">Car mode</string>
+    <string name="pref_car_mode_notification_summary">Enable notifications in car mode.</string>
     <string name="pref_car_extender_notification_title">Car extender notification</string>
-    <string name="pref_car_extender_notification_summary">Display car extender notifications.</string>
-    <string name="pref_ongoing_notification_summary">Display ongoing notifications.</string>
+    <string name="pref_car_extender_notification_summary">Enable car extender notifications.</string>
     <string name="pref_media_session_notification_title">Media session notification</string>
-    <string name="pref_media_session_notification_summary">Display media session notifications.</string>
-    <string name="pref_spurious_notification_title">Spurious Notification</string>
-    <string name="pref_app_list_summary">Display application list.</string>
-    <string name="pref_notification_access_summary">Display notification access settings.</string>
-    <string name="pref_android_auto_notification_title" />
-    <string name="pref_android_auto_notification_summary" />
-    <string name="pref_car_mode_notification_title">車載時通知</string>
-    <string name="pref_car_mode_notification_summary">車載時のみAndroid Autoに通知する。</string>
+    <string name="pref_media_session_notification_summary">Enable media session notifications.</string>
+    <string name="pref_ongoing_notification_title">Ongoing notification</string>
+    <string name="pref_ongoing_notification_summary">Enable ongoing notifications.</string>
+    <string name="pref_spurious_notification_title">Spurious notification</string>
+    <string name="pref_spurious_notification_summary">Enable spurious notifications of this app.</string>
 </resources>

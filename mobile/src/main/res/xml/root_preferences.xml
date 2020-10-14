@@ -2,45 +2,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="設定">
+    <PreferenceCategory app:title="@string/pref_category_general_setting_title" app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:key="android_auto_notification"
             app:title="@string/pref_android_auto_notification_title"
-            app:summary="@string/pref_android_auto_notification_summary" />
+            app:summary="@string/pref_android_auto_notification_summary"
+            app:iconSpaceReserved="false" />
+
         <Preference
             app:title="@string/pref_app_list_title"
-            app:summary="@string/pref_app_list_summary">
+            app:summary="@string/pref_app_list_summary"
+            app:iconSpaceReserved="false">
             <intent
                 android:targetPackage="io.github.sckzw.aanotifier"
                 android:targetClass="io.github.sckzw.aanotifier.AppListActivity" />
         </Preference>
+
         <Preference
             app:title="@string/pref_notification_access_title"
-            app:summary="@string/pref_notification_access_summary">
+            app:summary="@string/pref_notification_access_summary"
+            app:iconSpaceReserved="false">
             <intent android:action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" />
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="テスト用設定">
+    <PreferenceCategory app:title="@string/pref_category_test_setting_title" app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:key="car_mode_notification"
             app:title="@string/pref_car_mode_notification_title"
-            app:summary="@string/pref_car_mode_notification_summary" />
+            app:summary="@string/pref_car_mode_notification_summary"
+            app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             app:key="car_extender_notification"
             app:title="@string/pref_car_extender_notification_title"
-            app:summary="@string/pref_car_extender_notification_summary" />
+            app:summary="@string/pref_car_extender_notification_summary"
+            app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             app:key="media_session_notification"
             app:title="@string/pref_media_session_notification_title"
-            app:summary="@string/pref_media_session_notification_summary"/>
+            app:summary="@string/pref_media_session_notification_summary"
+            app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             app:key="ongoing_notification"
             app:title="@string/pref_ongoing_notification_title"
-            app:summary="@string/pref_ongoing_notification_summary" />
+            app:summary="@string/pref_ongoing_notification_summary"
+            app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             app:key="spurious_notification"
             app:title="@string/pref_spurious_notification_title"
-            app:summary="@string/pref_spurious_notification_summary" />
+            app:summary="@string/pref_spurious_notification_summary"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>
