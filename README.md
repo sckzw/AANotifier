@@ -1,13 +1,15 @@
 # AANotifier
 Android Auto Notifier
 
-![AA Notification](https://user-images.githubusercontent.com/4351207/67148263-cd232100-f2d8-11e9-8bf7-8d65f66ec5fc.png)
+![AA Notification](https://user-images.githubusercontent.com/4351207/96069583-7ba47680-0ed9-11eb-8360-063d5e9dc99f.png)
 
-![AA Notification Area](https://user-images.githubusercontent.com/4351207/67148265-dad8a680-f2d8-11e9-8274-bda53869af88.png)
+![AA Notification Area](https://user-images.githubusercontent.com/4351207/96069606-84954800-0ed9-11eb-9e66-a7051e8e67f0.png)
 
-![Main Activity](https://user-images.githubusercontent.com/4351207/67148267-e1671e00-f2d8-11e9-8e66-1e0855f5176c.png)
+![MainActivity](https://user-images.githubusercontent.com/4351207/96069645-9a0a7200-0ed9-11eb-882f-b1a1af4570d6.jpg)
 
-![Notification Access](https://user-images.githubusercontent.com/4351207/67148268-e330e180-f2d8-11e9-8159-ff37a49b8dca.png)
+![AppListActivity](https://user-images.githubusercontent.com/4351207/96069699-b1495f80-0ed9-11eb-98e2-168d253c4121.jpg)
+
+![Notification Access](https://user-images.githubusercontent.com/4351207/96069713-b9090400-0ed9-11eb-8e49-dfbcbdca5f4c.jpg)
 
 # Main source code file
 [MessagingService.java](https://github.com/sckzw/AANotifier/blob/master/mobile/src/main/java/io/github/sckzw/aanotifier/MessagingService.java "MessagingService.java")
