@@ -20,4 +20,6 @@
     <string name="pref_ongoing_notification_summary">Enable ongoing notifications.</string>
     <string name="pref_spurious_notification_title">Spurious notification</string>
     <string name="pref_spurious_notification_summary">Enable spurious notifications of this app.</string>
+    <string name="action_read_title">Mask as Read</string>
+    <string name="action_reply_title">Reply</string>
 </resources>

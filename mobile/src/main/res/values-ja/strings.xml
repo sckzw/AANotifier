@@ -21,4 +21,6 @@
     <string name="pref_ongoing_notification_summary">実行中通知を処理する。</string>
     <string name="pref_spurious_notification_title">疑似通知</string>
     <string name="pref_spurious_notification_summary">このアプリの疑似通知を表示する。</string>
+    <string name="action_read_title">既読</string>
+    <string name="action_reply_title">返信</string>
 </resources>

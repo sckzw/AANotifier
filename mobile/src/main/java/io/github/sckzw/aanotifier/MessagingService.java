@@ -23,6 +23,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
 import androidx.core.app.RemoteInput;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -207,23 +208,34 @@ public class MessagingService extends NotificationListenerService {
 
         RemoteInput remoteInput = new RemoteInput.Builder( EXTRA_VOICE_REPLY ).build();
 
-        NotificationCompat.CarExtender.UnreadConversation.Builder unreadConversationBuilder =
-                new NotificationCompat.CarExtender.UnreadConversation.Builder( title )
-                        .setLatestTimestamp( timeStamp )
-                        .setReadPendingIntent( readPendingIntent )
-                        .setReplyAction( replyPendingIntent, remoteInput );
-        unreadConversationBuilder.addMessage( text );
+        NotificationCompat.Action readAction = new NotificationCompat.Action.Builder( R.drawable.ic_launcher_foreground, getString( R.string.action_read_title ), readPendingIntent )
+                .setSemanticAction( NotificationCompat.Action.SEMANTIC_ACTION_MARK_AS_READ )
+                .setShowsUserInterface( false )
+                .build();
+
+        NotificationCompat.Action replyAction = new NotificationCompat.Action.Builder( R.drawable.ic_launcher_foreground, getString( R.string.action_reply_title ), replyPendingIntent )
+                .setSemanticAction( NotificationCompat.Action.SEMANTIC_ACTION_REPLY )
+                .setShowsUserInterface( false )
+                .addRemoteInput( remoteInput )
+                .build();
+
+        Person appPerson = new Person.Builder()
+                .setName( appName )
+                .setKey( sbn.getKey() )
+                .build();
+
+        NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle( appPerson );
+        messagingStyle.setConversationTitle( title );
+        messagingStyle.setGroupConversation( false );
+        messagingStyle.addMessage( text, timeStamp, appPerson );
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder( appContext )
                 .setChannelId( AANOTIFIER_PACKAGE_NAME )
                 .setSmallIcon( R.mipmap.ic_launcher )
                 .setLargeIcon( (Bitmap)extras.get( Notification.EXTRA_LARGE_ICON ) )
-                .setContentTitle( title )
-                .setContentText( text )
-                .setWhen( timeStamp )
-                .setContentIntent( readPendingIntent )
-                .extend( new NotificationCompat.CarExtender()
-                        .setUnreadConversation( unreadConversationBuilder.build() ) );
+                .setStyle( messagingStyle )
+                .addInvisibleAction( replyAction )
+                .addInvisibleAction( readAction );
 
         mNotificationManager.notify( sbn.getKey(), conversationId, builder.build() );
 
