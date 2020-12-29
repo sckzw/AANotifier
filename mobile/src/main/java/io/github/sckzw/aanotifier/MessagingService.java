@@ -14,6 +14,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -229,13 +231,16 @@ public class MessagingService extends NotificationListenerService {
         messagingStyle.setGroupConversation( false );
         messagingStyle.addMessage( text, timeStamp, appPerson );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder( appContext )
-                .setChannelId( AANOTIFIER_PACKAGE_NAME )
+        NotificationCompat.Builder builder = new NotificationCompat.Builder( appContext, AANOTIFIER_PACKAGE_NAME )
                 .setSmallIcon( R.mipmap.ic_launcher )
-                .setLargeIcon( (Bitmap)extras.get( Notification.EXTRA_LARGE_ICON ) )
                 .setStyle( messagingStyle )
                 .addInvisibleAction( replyAction )
                 .addInvisibleAction( readAction );
+
+        Icon largeIcon = notification.getLargeIcon();
+        if ( largeIcon != null ) {
+            builder.setLargeIcon( ( (BitmapDrawable)largeIcon.loadDrawable( appContext ) ).getBitmap() );
+        }
 
         mNotificationManager.notify( sbn.getKey(), conversationId, builder.build() );
 
