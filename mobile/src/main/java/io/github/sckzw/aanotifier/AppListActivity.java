@@ -145,13 +145,13 @@ public class AppListActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground( Void... voids ) {
             List< ApplicationInfo > appInfoList = mPackageManager.getInstalledApplications( 0 );
-            String availableAppList = mSharedPreferences.getString( PREF_KEY_AVAILABLE_APP_LIST, "" );
+            String availableAppList = ";" + mSharedPreferences.getString( PREF_KEY_AVAILABLE_APP_LIST, "" ) + ";";
 
             int appNum = appInfoList.size();
             int appCnt = 0;
 
             for ( ApplicationInfo appInfo : appInfoList ) {
-                boolean isAvailable = availableAppList.contains( appInfo.packageName );
+                boolean isAvailable = availableAppList.contains( ";" + appInfo.packageName + ";" );
 
                 mAppList.add( new AppListItem(
                         appInfo.packageName,
