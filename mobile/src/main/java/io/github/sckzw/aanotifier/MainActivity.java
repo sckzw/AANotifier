@@ -1,12 +1,15 @@
 package io.github.sckzw.aanotifier;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
-import net.grandcentrix.tray.AppPreferences;
-
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -26,6 +29,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 .beginTransaction()
                 .replace( R.id.layout_settings, new SettingsFragment() )
                 .commit();
+
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ) {
+            if ( ActivityCompat.checkSelfPermission( this, Manifest.permission.POST_NOTIFICATIONS ) != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions( this, new String[]{ Manifest.permission.POST_NOTIFICATIONS },0 );
+            }
+        }
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {

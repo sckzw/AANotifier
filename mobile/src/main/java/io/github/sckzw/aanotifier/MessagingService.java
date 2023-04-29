@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,8 +11,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Icon;
 import android.os.Build;
@@ -23,10 +20,14 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
+import androidx.car.app.connection.CarConnection;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.app.RemoteInput;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
@@ -42,7 +43,9 @@ public class MessagingService extends NotificationListenerService {
 
     private PreferenceBroadcastReceiver mPreferenceBroadcastReceiver;
     private NotificationManagerCompat mNotificationManager;
-    private UiModeManager mUiModeManager;
+    private LiveData<Integer> mConnectionTypeLiveData;
+    private Observer<Integer> mConnectionTypeObserver;
+    private Integer mConnectionType;
 
     private String  mAvailableAppList;
     private boolean mAndroidAutoNotification;
@@ -70,7 +73,9 @@ public class MessagingService extends NotificationListenerService {
                     NotificationManager.IMPORTANCE_MIN ) );
         }
 
-        mUiModeManager = (UiModeManager)context.getSystemService( Context.UI_MODE_SERVICE );
+        mConnectionTypeObserver = newConnectionType -> mConnectionType = newConnectionType;
+        mConnectionTypeLiveData = new CarConnection( context ).getType();
+        mConnectionTypeLiveData.observeForever( mConnectionTypeObserver );
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
 
@@ -89,6 +94,7 @@ public class MessagingService extends NotificationListenerService {
         if ( mPreferenceBroadcastReceiver != null ) {
             LocalBroadcastManager.getInstance( getApplicationContext() ).unregisterReceiver( mPreferenceBroadcastReceiver );
         }
+        mConnectionTypeLiveData.removeObserver( mConnectionTypeObserver );
     }
 
     @Override
@@ -111,7 +117,7 @@ public class MessagingService extends NotificationListenerService {
             return;
         }
 
-        if ( mCarModeNotification && mUiModeManager.getCurrentModeType() != Configuration.UI_MODE_TYPE_CAR ) {
+        if ( mCarModeNotification && mConnectionType == CarConnection.CONNECTION_TYPE_NOT_CONNECTED ) {
             return;
         }
 
@@ -159,6 +165,10 @@ public class MessagingService extends NotificationListenerService {
         int conversationId = 0;
         CharSequence charSequence;
 
+        if ( ActivityCompat.checkSelfPermission( this, android.Manifest.permission.POST_NOTIFICATIONS ) != PackageManager.PERMISSION_GRANTED ) {
+            return;
+        }
+
         String title = "";
 
         if ( extras.containsKey( Notification.EXTRA_TITLE ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TITLE ) ) != null ) {
@@ -197,7 +207,7 @@ public class MessagingService extends NotificationListenerService {
                         .setAction( INTENT_ACTION_READ_MESSAGE )
                         .putExtra( CONVERSATION_ID, conversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
-                PendingIntent.FLAG_UPDATE_CURRENT );
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE );
 
         PendingIntent replyPendingIntent = PendingIntent.getBroadcast(
                 appContext,
@@ -206,7 +216,7 @@ public class MessagingService extends NotificationListenerService {
                         .setAction( INTENT_ACTION_REPLY_MESSAGE )
                         .putExtra( CONVERSATION_ID, conversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
-                PendingIntent.FLAG_UPDATE_CURRENT );
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE );
 
         RemoteInput remoteInput = new RemoteInput.Builder( EXTRA_VOICE_REPLY ).build();
 
