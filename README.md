@@ -16,6 +16,7 @@ Android Auto未対応のアプリの通知をAndroid Autoヘッドユニット�
 1. AANotifierのメイン画面の「Android Auto通知」のチェックが有効になっていることを確認してください。
 1. AANotifierのメイン画面の「通知へのアクセス」をタップしてください。
 1. 表示された画面で、AANotifierのチェックを有効にしてください。
+    * **Android 13では事前に[制限付き設定を許可する](https://support.google.com/android/answer/12623953)必要があります。**
 1. AANotifierのメイン画面の「アプリ一覧」をタップしてください。
 1. 表示された画面で、Android Autoに通知を表示したいアプリのチェックを有効にしてください。
 
