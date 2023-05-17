@@ -8,15 +8,19 @@ Android Auto未対応のアプリの通知をAndroid Autoヘッドユニット�
 - Android Autoヘッドユニット (Android Auto対応ナビなど)
 
 ## インストール
-1. 本アプリはAndroid Autoのポリシーに準拠していないため、Google Playストアから配布できません。したがって、以下の手順に従ってインストールしてください。
+本アプリはAndroid Autoのポリシーに準拠していないため、Google Playストアから配布できません。したがって、以下の手順に従ってインストールしてください。
 1. [リリースページ](https://github.com/sckzw/AANotifier/releases)からAPKファイルをダウンロードし、端末にアプリをインストールしてください(詳細は割愛します)。
-1. [こちらのページの手順1](https://developer.android.com/training/cars/testing?hl=ja#step1)を参照してAndroid Autoの「提供元不明のアプリ」のチェックを有効にしてください。
+1. Android Autoの設定画面の一番下の「バージョン」をタップして「バージョンと権限情報」を表示します。
+1. 「バージョンと権限情報」を10回タップします。
+1. 「デベロッパー向けの設定を有効にしますか?」ダイアログが表示されるので、「OK」をタップします。これでデベロッパーモードが有効になります。
+1. Android Autoの設定画面の右上のメニューから「デベロッパー向けの設定」をタップします。
+1. 「デベロッパー向けの設定」画面の下の方の「提供元不明のアプリ」をチェックします。
 
 ## 設定
 1. AANotifierのメイン画面の「Android Auto通知」のチェックが有効になっていることを確認してください。
 1. AANotifierのメイン画面の「通知へのアクセス」をタップしてください。
 1. 表示された画面で、AANotifierのチェックを有効にしてください。
-    * **Android 13では事前に[制限付き設定を許可する](https://support.google.com/android/answer/12623953)必要があります。**
+    * **Android 13では[制限付き設定を許可する](https://support.google.com/android/answer/12623953)必要があります。**
 1. AANotifierのメイン画面の「アプリ一覧」をタップしてください。
 1. 表示された画面で、Android Autoに通知を表示したいアプリのチェックを有効にしてください。
 
