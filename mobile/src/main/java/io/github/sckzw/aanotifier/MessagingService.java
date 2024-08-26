@@ -189,15 +189,8 @@ public class MessagingService extends NotificationListenerService {
             text = notification.tickerText.toString();
         }
 
-        if ( !text.startsWith( title ) ) {
-            text = title + ": " + text;
-        }
-
         String appName = getApplicationName( sbn.getPackageName() );
 
-        if ( !text.startsWith( appName ) ) {
-            text = appName + ": " + text;
-        }
         if ( !title.startsWith( appName ) ) {
             title = appName + ": " + title;
         }
