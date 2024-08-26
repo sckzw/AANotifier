@@ -22,4 +22,6 @@
     <string name="pref_spurious_notification_summary">Enable spurious notifications of this app.</string>
     <string name="action_read_title">Mask as Read</string>
     <string name="action_reply_title">Reply</string>
+    <string name="pref_notification_setting_title">Notification setting</string>
+    <string name="pref_notification_setting_summary">Open notification settings.</string>
 </resources>

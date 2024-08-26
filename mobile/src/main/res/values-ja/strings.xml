@@ -23,4 +23,6 @@
     <string name="pref_spurious_notification_summary">このアプリの疑似通知を表示する。</string>
     <string name="action_read_title">既読</string>
     <string name="action_reply_title">返信</string>
+    <string name="pref_notification_setting_title">通知設定</string>
+    <string name="pref_notification_setting_summary">このアプリの通知の設定画面を開く。</string>
 </resources>

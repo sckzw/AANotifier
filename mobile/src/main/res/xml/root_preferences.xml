@@ -25,6 +25,13 @@
             app:iconSpaceReserved="false">
             <intent android:action="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS" />
         </Preference>
+
+        <Preference
+            app:key="notification_setting"
+            app:title="@string/pref_notification_setting_title"
+            app:summary="@string/pref_notification_setting_summary"
+            app:iconSpaceReserved="false">
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_category_test_setting_title" app:iconSpaceReserved="false">

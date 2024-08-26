@@ -6,11 +6,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
@@ -41,6 +43,22 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         @Override
         public void onCreatePreferences( Bundle savedInstanceState, String rootKey ) {
             setPreferencesFromResource( R.xml.root_preferences, rootKey );
+        }
+
+        @Override
+        public boolean onPreferenceTreeClick( @NonNull Preference preference ) {
+            if ( preference.hasKey() && preference.getKey().equals( "notification_setting" ) ) {
+                startActivity( new Intent( Settings.ACTION_APP_NOTIFICATION_SETTINGS )
+                        .putExtra( Settings.EXTRA_APP_PACKAGE, "io.github.sckzw.aanotifier" ) );
+
+                // startActivity( new Intent( Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS )
+                //         .putExtra( Settings.EXTRA_APP_PACKAGE, "io.github.sckzw.aanotifier" )
+                //         .putExtra( Settings.EXTRA_CHANNEL_ID, "AANotifier" ) );
+
+                return true;
+            }
+
+            return super.onPreferenceTreeClick( preference );
         }
     }
 
