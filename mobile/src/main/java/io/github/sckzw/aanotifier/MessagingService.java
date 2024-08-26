@@ -41,6 +41,8 @@ public class MessagingService extends NotificationListenerService {
     private static final String AANOTIFIER_PACKAGE_NAME = "io.github.sckzw.aanotifier";
     private static final String TAG = MessagingService.class.getSimpleName();
 
+    private static int mConversationId = 0;
+
     private PreferenceBroadcastReceiver mPreferenceBroadcastReceiver;
     private NotificationManagerCompat mNotificationManager;
     private LiveData<Integer> mConnectionTypeLiveData;
@@ -162,8 +164,8 @@ public class MessagingService extends NotificationListenerService {
         Notification notification = sbn.getNotification();
         Bundle extras = notification.extras;
         long timeStamp = sbn.getPostTime();
-        int conversationId = 0;
         CharSequence charSequence;
+        mConversationId++;
 
         if ( ActivityCompat.checkSelfPermission( this, android.Manifest.permission.POST_NOTIFICATIONS ) != PackageManager.PERMISSION_GRANTED ) {
             return;
@@ -202,19 +204,19 @@ public class MessagingService extends NotificationListenerService {
 
         PendingIntent readPendingIntent = PendingIntent.getBroadcast(
                 appContext,
-                conversationId,
+                mConversationId,
                 new Intent( appContext, MessageReadReceiver.class )
                         .setAction( INTENT_ACTION_READ_MESSAGE )
-                        .putExtra( CONVERSATION_ID, conversationId )
+                        .putExtra( CONVERSATION_ID, mConversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE );
 
         PendingIntent replyPendingIntent = PendingIntent.getBroadcast(
                 appContext,
-                conversationId,
+                mConversationId,
                 new Intent( appContext, MessageReplyReceiver.class )
                         .setAction( INTENT_ACTION_REPLY_MESSAGE )
-                        .putExtra( CONVERSATION_ID, conversationId )
+                        .putExtra( CONVERSATION_ID, mConversationId )
                         .addFlags( Intent.FLAG_INCLUDE_STOPPED_PACKAGES ),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE );
 
@@ -252,14 +254,14 @@ public class MessagingService extends NotificationListenerService {
             builder.setLargeIcon( ( (BitmapDrawable)largeIcon.loadDrawable( appContext ) ).getBitmap() );
         }
 
-        mNotificationManager.notify( sbn.getKey(), conversationId, builder.build() );
+        mNotificationManager.notify( sbn.getKey(), mConversationId, builder.build() );
 
         if ( !mSpuriousNotification ) {
             final String key = sbn.getKey();
             new Handler().postDelayed( new Runnable() {
                 @Override
                 public void run() {
-                    mNotificationManager.cancel( key, 0 );
+                    mNotificationManager.cancel( key, mConversationId );
                 }
             }, 1000 );
         }
