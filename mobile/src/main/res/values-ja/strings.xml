@@ -11,8 +11,8 @@
     <string name="pref_notification_access_summary">このアプリの通知へのアクセスの設定画面を開く。</string>
 
     <string name="pref_category_test_setting_title">テスト向け設定</string>
-    <string name="pref_car_mode_notification_title">車載モード</string>
-    <string name="pref_car_mode_notification_summary">車載モード時のみ通知を有効にする。</string>
+    <string name="pref_car_mode_notification_title">Android Auto接続検知</string>
+    <string name="pref_car_mode_notification_summary">Android Autoへ接続している時のみ通知を有効にする。</string>
     <string name="pref_car_extender_notification_title">車載拡張通知</string>
     <string name="pref_car_extender_notification_summary">車載拡張通知を処理する。</string>
     <string name="pref_media_session_notification_title">メディアセッション通知</string>
@@ -20,7 +20,7 @@
     <string name="pref_ongoing_notification_title">実行中通知</string>
     <string name="pref_ongoing_notification_summary">実行中通知を処理する。</string>
     <string name="pref_spurious_notification_title">疑似通知</string>
-    <string name="pref_spurious_notification_summary">このアプリの疑似通知を表示する。</string>
+    <string name="pref_spurious_notification_summary">このアプリの疑似通知を表示したままにする。</string>
     <string name="action_read_title">既読</string>
     <string name="action_reply_title">返信</string>
     <string name="pref_notification_setting_title">通知設定</string>
