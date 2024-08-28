@@ -26,6 +26,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.app.RemoteInput;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -226,28 +227,32 @@ public class MessagingService extends NotificationListenerService {
                 .addRemoteInput( remoteInput )
                 .build();
 
-        Person appPerson = new Person.Builder()
+        Person.Builder personBuilder = new Person.Builder()
                 .setName( appName )
-                .setKey( sbn.getKey() )
-                .build();
+                .setKey( sbn.getKey() );
+
+        Icon notificationIcon;
+        if ( ( notificationIcon = notification.getLargeIcon() ) != null ) {
+            personBuilder.setIcon( IconCompat.createFromIcon( appContext, notificationIcon ) );
+        }
+        else if ( ( notificationIcon = notification.getSmallIcon() ) != null ) {
+            personBuilder.setIcon( IconCompat.createFromIcon( appContext, notificationIcon ) );
+        }
+
+        Person appPerson = personBuilder.build();
 
         NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle( appPerson );
         messagingStyle.setConversationTitle( title );
         messagingStyle.setGroupConversation( false );
         messagingStyle.addMessage( text, timeStamp, appPerson );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder( appContext, AANOTIFIER_PACKAGE_NAME )
-                .setSmallIcon( R.mipmap.ic_launcher )
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder( appContext, AANOTIFIER_PACKAGE_NAME )
+                .setSmallIcon( R.drawable.ic_notification )
                 .setStyle( messagingStyle )
                 .addInvisibleAction( replyAction )
                 .addInvisibleAction( readAction );
 
-        Icon largeIcon = notification.getLargeIcon();
-        if ( largeIcon != null ) {
-            builder.setLargeIcon( ( (BitmapDrawable)largeIcon.loadDrawable( appContext ) ).getBitmap() );
-        }
-
-        mNotificationManager.notify( sbn.getKey(), mConversationId, builder.build() );
+        mNotificationManager.notify( sbn.getKey(), mConversationId, notificationBuilder.build() );
 
         if ( !mSpuriousNotification ) {
             final String key = sbn.getKey();
