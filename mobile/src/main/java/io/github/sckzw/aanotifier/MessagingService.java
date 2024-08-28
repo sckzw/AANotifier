@@ -190,11 +190,11 @@ public class MessagingService extends NotificationListenerService {
             text = notification.tickerText.toString();
         }
 
-        String appName = getApplicationName( sbn.getPackageName() );
-
-        if ( !title.startsWith( appName ) ) {
-            title = appName + ": " + title;
+        if ( !text.startsWith( title ) ) {
+            text = title + ": " + text;
         }
+
+        String appName = getApplicationName( sbn.getPackageName() );
 
         PendingIntent readPendingIntent = PendingIntent.getBroadcast(
                 appContext,
@@ -243,7 +243,7 @@ public class MessagingService extends NotificationListenerService {
 
         NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle( appPerson );
         messagingStyle.setConversationTitle( title );
-        messagingStyle.setGroupConversation( false );
+        messagingStyle.setGroupConversation( true );
         messagingStyle.addMessage( text, timeStamp, appPerson );
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder( appContext, AANOTIFIER_PACKAGE_NAME )
