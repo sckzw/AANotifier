@@ -42,7 +42,7 @@ public class MessagingService extends NotificationListenerService {
     private static final String AANOTIFIER_PACKAGE_NAME = "io.github.sckzw.aanotifier";
     private static final String TAG = MessagingService.class.getSimpleName();
 
-    private static int mConversationId = 0;
+    private int mConversationId = 0;
 
     private PreferenceBroadcastReceiver mPreferenceBroadcastReceiver;
     private NotificationManagerCompat mNotificationManager;
@@ -256,10 +256,11 @@ public class MessagingService extends NotificationListenerService {
 
         if ( !mSpuriousNotification ) {
             final String key = sbn.getKey();
+            final int conversationId = mConversationId;
             new Handler().postDelayed( new Runnable() {
                 @Override
                 public void run() {
-                    mNotificationManager.cancel( key, mConversationId );
+                    mNotificationManager.cancel( key, conversationId );
                 }
             }, 1000 );
         }
