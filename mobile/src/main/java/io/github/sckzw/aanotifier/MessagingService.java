@@ -150,16 +150,6 @@ public class MessagingService extends NotificationListenerService {
         sendNotification( sbn );
     }
 
-    @Override
-    public void onNotificationRemoved( StatusBarNotification sbn ) {
-        super.onNotificationRemoved( sbn );
-
-        String packageName = sbn.getPackageName();
-        Log.d( TAG, "onNotificationRemoved: " + packageName );
-
-        mNotificationManager.cancel( sbn.getKey(), 0 );
-    }
-
     private void sendNotification( StatusBarNotification sbn ) {
         Context appContext = getApplicationContext();
         Notification notification = sbn.getNotification();
