@@ -15,8 +15,6 @@ public class MessageReplyReceiver extends BroadcastReceiver {
             int conversationId = intent.getIntExtra( MessagingService.CONVERSATION_ID, -1 );
             if ( conversationId != -1 ) {
                 Log.d( TAG, "Conversation " + conversationId + " reply action." );
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from( context );
-                notificationManager.cancel( conversationId );
             }
         }
     }
