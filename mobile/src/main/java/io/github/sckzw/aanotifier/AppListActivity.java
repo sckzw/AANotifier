@@ -62,7 +62,7 @@ public class AppListActivity extends AppCompatActivity {
             }
         } );
 
-        mPackageManager = getApplicationContext().getPackageManager();;
+        mPackageManager = getApplicationContext().getPackageManager();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
 
         try ( ExecutorService executorService = Executors.newSingleThreadExecutor() ) {
