@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,16 +15,17 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -33,6 +33,7 @@ import androidx.preference.PreferenceManager;
 public class AppListActivity extends AppCompatActivity {
     private static final String PREF_KEY_AVAILABLE_APP_LIST = "available_app_list";
     private final List< AppListItem > mAppList = new ArrayList<>();
+    private final AppListAdapter mAppListAdapter = new AppListAdapter();
     private final HashMap< String, Boolean > mAvailableAppList = new HashMap<>();
     private PackageManager mPackageManager;
     private SharedPreferences mSharedPreferences;
@@ -42,10 +43,31 @@ public class AppListActivity extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_app_list );
 
+        ListView listView = findViewById( R.id.app_list_view );
+        listView.setAdapter( mAppListAdapter );
+        listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick( AdapterView< ? > adapterView, View view, int i, long l ) {
+                AppListItem appListItem = mAppList.get( i );
+                appListItem.isAvailable = !appListItem.isAvailable;
+
+                if ( appListItem.isAvailable ) {
+                    mAvailableAppList.put( appListItem.pkgName, true );
+                }
+                else {
+                    mAvailableAppList.remove( appListItem.pkgName );
+                }
+
+                mAppListAdapter.notifyDataSetChanged();
+            }
+        } );
+
         mPackageManager = getApplicationContext().getPackageManager();;
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
 
-        new LoadAppListTask().execute();
+        try ( ExecutorService executorService = Executors.newSingleThreadExecutor() ) {
+            executorService.submit( new LoadAppListRunnable() );
+        }
     }
 
     @Override
@@ -98,7 +120,7 @@ public class AppListActivity extends AppCompatActivity {
             ImageView imageAppIcon;
             TextView textAppName;
             TextView textPkgName;
-            Switch switchIsEnabled;
+            SwitchCompat switchIsEnabled;
 
             if ( listItemView == null ) {
                 listItemView = ( (LayoutInflater)getSystemService( Context.LAYOUT_INFLATER_SERVICE ) ).inflate( R.layout.app_list_item, null );
@@ -139,18 +161,17 @@ public class AppListActivity extends AppCompatActivity {
         }
     }
 
-    private class LoadAppListTask extends AsyncTask< Void, Void, Void > {
-        ProgressBar mProgressBar;
-
+    private class LoadAppListRunnable implements Runnable {
         @Override
-        protected Void doInBackground( Void... voids ) {
+        public void run() {
             List< ApplicationInfo > appInfoList = mPackageManager.getInstalledApplications( 0 );
             String availableAppList = ";" + mSharedPreferences.getString( PREF_KEY_AVAILABLE_APP_LIST, "" ) + ";";
+            ProgressBar progressBar = findViewById( R.id.progress_bar );
 
             int appNum = appInfoList.size();
             int appCnt = 0;
 
-            for ( ApplicationInfo appInfo : appInfoList ) {
+            for ( ApplicationInfo appInfo: appInfoList ) {
                 boolean isAvailable = availableAppList.contains( ";" + appInfo.packageName + ";" );
 
                 mAppList.add( new AppListItem(
@@ -164,59 +185,30 @@ public class AppListActivity extends AppCompatActivity {
                     mAvailableAppList.put( appInfo.packageName, true );
                 }
 
-                mProgressBar.setProgress( 100 * ( ++appCnt ) / appNum );
+                progressBar.setProgress( 100 * ( ++appCnt ) / appNum );
             }
 
-            Collections.sort( mAppList, new Comparator< AppListItem >() {
+            mAppList.sort( new Comparator< AppListItem >() {
                 @Override
                 public int compare( AppListItem appListItem1, AppListItem appListItem2 ) {
                     if ( appListItem1.isAvailable == appListItem2.isAvailable ) {
                         return appListItem1.appName.compareTo( appListItem2.appName );
                     }
                     else {
-                        return appListItem1.isAvailable ? -1: 1;
+                        return appListItem1.isAvailable ? -1 : 1;
                     }
                 }
             } );
 
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgressBar = findViewById( R.id.progress_bar );
-        }
-
-        @Override
-        protected void onPostExecute( Void aVoid ) {
-            super.onPostExecute( aVoid );
-
-            final AppListAdapter adapter = new AppListAdapter();
-            ListView listView = findViewById( R.id.app_list_view );
-            listView.setAdapter( adapter );
-            listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            runOnUiThread( new Runnable() {
                 @Override
-                public void onItemClick( AdapterView< ? > adapterView, View view, int i, long l ) {
-                    AppListItem appListItem = mAppList.get( i );
-                    appListItem.isAvailable = !appListItem.isAvailable;
-                    adapter.notifyDataSetChanged();
+                public void run() {
+                    ProgressBar progressBar = findViewById( R.id.progress_bar );
+                    progressBar.setVisibility( android.widget.ProgressBar.INVISIBLE );
 
-                    if ( appListItem.isAvailable ) {
-                        mAvailableAppList.put( appListItem.pkgName, true );
-                    }
-                    else {
-                        mAvailableAppList.remove( appListItem.pkgName );
-                    }
+                    mAppListAdapter.notifyDataSetChanged();
                 }
             } );
-
-            mProgressBar.setVisibility( android.widget.ProgressBar.INVISIBLE );
-        }
-
-        @Override
-        protected void onProgressUpdate( Void... values ) {
-            super.onProgressUpdate( values );
         }
     }
 }
