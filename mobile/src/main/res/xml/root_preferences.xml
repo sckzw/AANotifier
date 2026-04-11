@@ -34,12 +34,17 @@
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_category_test_setting_title" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/pref_category_test_setting_title" app:iconSpaceReserved="false" app:initialExpandedChildrenCount="2">
         <SwitchPreferenceCompat
             app:key="car_mode_notification"
             app:title="@string/pref_car_mode_notification_title"
             app:summary="@string/pref_car_mode_notification_summary"
             app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            app:key="spurious_notification"
+            app:title="@string/pref_spurious_notification_title"
+            app:summary="@string/pref_spurious_notification_summary"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             app:key="car_extender_notification"
@@ -55,11 +60,6 @@
             app:key="ongoing_notification"
             app:title="@string/pref_ongoing_notification_title"
             app:summary="@string/pref_ongoing_notification_summary"
-            app:iconSpaceReserved="false" />
-        <SwitchPreferenceCompat
-            app:key="spurious_notification"
-            app:title="@string/pref_spurious_notification_title"
-            app:summary="@string/pref_spurious_notification_summary"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>
