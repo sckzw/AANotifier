@@ -236,6 +236,7 @@ public class MessagingService extends NotificationListenerService {
         messagingStyle.addMessage( text, timeStamp, appPerson );
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder( appContext, AANOTIFIER_PACKAGE_NAME )
+                .setCategory( NotificationCompat.CATEGORY_MESSAGE )
                 .setSmallIcon( R.drawable.ic_notification )
                 .setStyle( messagingStyle )
                 .addInvisibleAction( replyAction )
