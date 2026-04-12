@@ -165,7 +165,8 @@ public class MessagingService extends NotificationListenerService {
 
         if ( extras.containsKey( Notification.EXTRA_TITLE ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TITLE ) ) != null ) {
             title = charSequence.toString();
-        } else if ( extras.containsKey( Notification.EXTRA_TITLE_BIG ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TITLE_BIG ) ) != null ) {
+        }
+        else if ( extras.containsKey( Notification.EXTRA_TITLE_BIG ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TITLE_BIG ) ) != null ) {
             title = charSequence.toString();
         }
 
@@ -173,9 +174,11 @@ public class MessagingService extends NotificationListenerService {
 
         if ( extras.containsKey( Notification.EXTRA_TEXT ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_TEXT ) ) != null ) {
             text = charSequence.toString();
-        } else if ( extras.containsKey( Notification.EXTRA_BIG_TEXT ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_BIG_TEXT ) ) != null ) {
+        }
+        else if ( extras.containsKey( Notification.EXTRA_BIG_TEXT ) && ( charSequence = extras.getCharSequence( Notification.EXTRA_BIG_TEXT ) ) != null ) {
             text = charSequence.toString();
-        } else if ( notification.tickerText != null ) {
+        }
+        else if ( notification.tickerText != null ) {
             text = notification.tickerText.toString();
         }
 
