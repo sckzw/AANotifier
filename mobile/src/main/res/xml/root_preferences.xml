@@ -2,7 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/pref_category_general_setting_title" app:iconSpaceReserved="false">
+    <PreferenceCategory
+        app:title="@string/pref_category_general_setting_title"
+        app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:key="android_auto_notification"
             app:title="@string/pref_android_auto_notification_title"
@@ -34,7 +36,11 @@
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/pref_category_test_setting_title" app:iconSpaceReserved="false" app:initialExpandedChildrenCount="2">
+    <PreferenceCategory
+        app:key="pref_category_test_setting"
+        app:title="@string/pref_category_test_setting_title"
+        app:iconSpaceReserved="false"
+        app:initialExpandedChildrenCount="2">
         <SwitchPreferenceCompat
             app:key="car_mode_notification"
             app:title="@string/pref_car_mode_notification_title"
