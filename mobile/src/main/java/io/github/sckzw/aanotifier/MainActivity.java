@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
+        EdgeToEdge.enable(this );
         super.onCreate( savedInstanceState );
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
