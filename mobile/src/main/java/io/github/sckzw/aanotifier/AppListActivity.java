@@ -37,6 +37,8 @@ public class AppListActivity extends AppCompatActivity {
     private final HashMap< String, Boolean > mAvailableAppList = new HashMap<>();
     private PackageManager mPackageManager;
     private SharedPreferences mSharedPreferences;
+    private ExecutorService mExecutorService;
+    private boolean mAppListLoaded = false;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -44,7 +46,6 @@ public class AppListActivity extends AppCompatActivity {
         setContentView( R.layout.activity_app_list );
 
         ListView listView = findViewById( R.id.app_list_view );
-        listView.setAdapter( mAppListAdapter );
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick( AdapterView< ? > adapterView, View view, int i, long l ) {
@@ -65,14 +66,23 @@ public class AppListActivity extends AppCompatActivity {
         mPackageManager = getApplicationContext().getPackageManager();
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
 
-        try ( ExecutorService executorService = Executors.newSingleThreadExecutor() ) {
-            executorService.submit( new LoadAppListRunnable() );
-        }
+        mExecutorService = Executors.newSingleThreadExecutor();
+        mExecutorService.submit( new LoadAppListRunnable() );
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mExecutorService.shutdownNow();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        if ( !mAppListLoaded ) {
+            return;
+        }
 
         String availableAppList = String.join( ";", mAvailableAppList.keySet() );
 
@@ -186,6 +196,10 @@ public class AppListActivity extends AppCompatActivity {
                 }
 
                 progressBar.setProgress( 100 * ( ++appCnt ) / appNum );
+
+                if ( Thread.currentThread().isInterrupted() ) {
+                    return;
+                }
             }
 
             mAppList.sort( new Comparator< AppListItem >() {
@@ -200,13 +214,16 @@ public class AppListActivity extends AppCompatActivity {
                 }
             } );
 
+            mAppListLoaded = true;
+
             runOnUiThread( new Runnable() {
                 @Override
                 public void run() {
                     ProgressBar progressBar = findViewById( R.id.progress_bar );
                     progressBar.setVisibility( android.widget.ProgressBar.INVISIBLE );
 
-                    mAppListAdapter.notifyDataSetChanged();
+                    ListView listView = findViewById( R.id.app_list_view );
+                    listView.setAdapter( mAppListAdapter );
                 }
             } );
         }
