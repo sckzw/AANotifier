@@ -25,4 +25,5 @@
     <string name="action_reply_title">返信</string>
     <string name="pref_notification_setting_title">通知設定</string>
     <string name="pref_notification_setting_summary">このアプリの通知の設定画面を開く。</string>
+    <string name="app_search_hint">アプリを検索</string>
 </resources>

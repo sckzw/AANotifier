@@ -7,14 +7,11 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -69,22 +66,6 @@ public class AppListActivity extends AppCompatActivity {
                 }
 
                 mAppListAdapter.notifyDataSetChanged();
-            }
-        } );
-
-        EditText editKeyword = findViewById( R.id.edit_keyword );
-        editKeyword.addTextChangedListener( new TextWatcher() {
-            @Override
-            public void beforeTextChanged( CharSequence charSequence, int i, int i1, int i2 ) {
-            }
-
-            @Override
-            public void onTextChanged( CharSequence charSequence, int i, int i1, int i2 ) {
-                mAppListAdapter.getFilter().filter( charSequence );
-            }
-
-            @Override
-            public void afterTextChanged( Editable editable ) {
             }
         } );
 
