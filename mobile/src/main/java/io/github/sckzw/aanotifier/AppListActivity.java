@@ -7,11 +7,16 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -26,6 +31,7 @@ import java.util.concurrent.Executors;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -34,6 +40,7 @@ import androidx.preference.PreferenceManager;
 public class AppListActivity extends AppCompatActivity {
     private static final String PREF_KEY_AVAILABLE_APP_LIST = "available_app_list";
     private final List< AppListItem > mAppList = new ArrayList<>();
+    private List< AppListItem > mFilterAppList = new ArrayList<>();
     private final AppListAdapter mAppListAdapter = new AppListAdapter();
     private final HashMap< String, Boolean > mAvailableAppList = new HashMap<>();
     private PackageManager mPackageManager;
@@ -43,7 +50,7 @@ public class AppListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
-        EdgeToEdge.enable(this );
+        EdgeToEdge.enable( this );
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_app_list );
 
@@ -51,7 +58,7 @@ public class AppListActivity extends AppCompatActivity {
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick( AdapterView< ? > adapterView, View view, int i, long l ) {
-                AppListItem appListItem = mAppList.get( i );
+                AppListItem appListItem = mFilterAppList.get( i );
                 appListItem.isAvailable = !appListItem.isAvailable;
 
                 if ( appListItem.isAvailable ) {
@@ -62,6 +69,36 @@ public class AppListActivity extends AppCompatActivity {
                 }
 
                 mAppListAdapter.notifyDataSetChanged();
+            }
+        } );
+
+        EditText editKeyword = findViewById( R.id.edit_keyword );
+        editKeyword.addTextChangedListener( new TextWatcher() {
+            @Override
+            public void beforeTextChanged( CharSequence charSequence, int i, int i1, int i2 ) {
+            }
+
+            @Override
+            public void onTextChanged( CharSequence charSequence, int i, int i1, int i2 ) {
+                mAppListAdapter.getFilter().filter( charSequence );
+            }
+
+            @Override
+            public void afterTextChanged( Editable editable ) {
+            }
+        } );
+
+        SearchView searchKeyword = findViewById( R.id.search_keyword );
+        searchKeyword.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit( String query ) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange( String newText ) {
+                mAppListAdapter.getFilter().filter( newText );
+                return true;
             }
         } );
 
@@ -110,15 +147,17 @@ public class AppListActivity extends AppCompatActivity {
         }
     }
 
-    private class AppListAdapter extends BaseAdapter {
+    private class AppListAdapter extends BaseAdapter implements Filterable {
+        private final AppListFilter appListFilter = new AppListFilter();
+
         @Override
         public int getCount() {
-            return mAppList.size();
+            return mFilterAppList.size();
         }
 
         @Override
         public Object getItem( int position ) {
-            return mAppList.get( position );
+            return mFilterAppList.get( position );
         }
 
         @Override
@@ -171,6 +210,44 @@ public class AppListActivity extends AppCompatActivity {
 
             return listItemView;
         }
+
+        @Override
+        public Filter getFilter() {
+            return appListFilter;
+        }
+
+        private class AppListFilter extends Filter {
+            @Override
+            protected FilterResults performFiltering( CharSequence charSequence ) {
+                FilterResults filterResults = new FilterResults();
+
+                if ( charSequence == null || charSequence.length() == 0 ) {
+                    filterResults.values = mAppList;
+                    filterResults.count = mAppList.size();
+                }
+                else {
+                    String keyword = charSequence.toString().toLowerCase();
+                    List< AppListItem > filterItems = new ArrayList<>();
+
+                    for ( AppListItem item: mAppList ) {
+                        if ( item.appName.toLowerCase().contains( keyword ) ) {
+                            filterItems.add( item );
+                        }
+                    }
+
+                    filterResults.values = filterItems;
+                    filterResults.count  = filterItems.size();
+                }
+
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults( CharSequence charSequence, FilterResults filterResults ) {
+                mFilterAppList = (List< AppListItem >)filterResults.values;
+                notifyDataSetChanged();
+            }
+        }
     }
 
     private class LoadAppListRunnable implements Runnable {
@@ -216,6 +293,7 @@ public class AppListActivity extends AppCompatActivity {
                 }
             } );
 
+            mFilterAppList = mAppList;
             mAppListLoaded = true;
 
             runOnUiThread( new Runnable() {

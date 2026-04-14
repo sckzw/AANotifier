@@ -15,10 +15,27 @@
         android:layout_height="wrap_content"
         android:minHeight="4dip" />
 
+    <EditText
+        android:id="@+id/edit_keyword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:hint="検索キーワードを入力してください"
+        android:importantForAutofill="no"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:inputType="text" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_keyword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:iconifiedByDefault="false"
+        app:queryHint="検索キーワードを入力してください" />
+
     <ListView
         android:id="@+id/app_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    </ListView>
 </LinearLayout>
