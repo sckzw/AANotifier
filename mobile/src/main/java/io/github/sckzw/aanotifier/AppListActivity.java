@@ -213,7 +213,8 @@ public class AppListActivity extends AppCompatActivity {
                     List< AppListItem > filterItems = new ArrayList<>();
 
                     for ( AppListItem item: mAppList ) {
-                        if ( item.appName.toLowerCase().contains( keyword ) ) {
+                        if ( item.appName.toLowerCase().contains( keyword ) ||
+                                item.pkgName.toLowerCase().contains( keyword ) ) {
                             filterItems.add( item );
                         }
                     }
