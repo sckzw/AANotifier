@@ -26,4 +26,6 @@
     <string name="pref_notification_setting_title">通知設定</string>
     <string name="pref_notification_setting_summary">このアプリの通知の設定画面を開く。</string>
     <string name="app_search_hint">アプリを検索</string>
+    <string name="pref_permission_check_title">通知権限の確認</string>
+    <string name="pref_permission_check_summary">通知権限を有するアプリのみリストアップする。</string>
 </resources>

@@ -40,12 +40,17 @@
         app:key="pref_category_test_setting"
         app:title="@string/pref_category_test_setting_title"
         app:iconSpaceReserved="false"
-        app:initialExpandedChildrenCount="2">
+        app:initialExpandedChildrenCount="3">
         <SwitchPreferenceCompat
             app:key="car_mode_notification"
             app:title="@string/pref_car_mode_notification_title"
             app:summary="@string/pref_car_mode_notification_summary"
             app:defaultValue="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            app:key="permission_check"
+            app:title="@string/pref_permission_check_title"
+            app:summary="@string/pref_permission_check_summary"
             app:iconSpaceReserved="false" />
         <SwitchPreferenceCompat
             app:key="spurious_notification"

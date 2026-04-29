@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import androidx.preference.PreferenceManager;
 
 public class AppListActivity extends AppCompatActivity {
     private static final String PREF_KEY_AVAILABLE_APP_LIST = "available_app_list";
+    private static final String PREF_KEY_PERMISSION_CHECK = "permission_check";
     private final List< AppListItem > mAppList = new ArrayList<>();
     private List< AppListItem > mFilterAppList = new ArrayList<>();
     private final AppListAdapter mAppListAdapter = new AppListAdapter();
@@ -236,12 +238,38 @@ public class AppListActivity extends AppCompatActivity {
         public void run() {
             List< ApplicationInfo > appInfoList = mPackageManager.getInstalledApplications( 0 );
             String availableAppList = ";" + mSharedPreferences.getString( PREF_KEY_AVAILABLE_APP_LIST, "" ) + ";";
+            boolean permissionCheck = mSharedPreferences.getBoolean( PREF_KEY_PERMISSION_CHECK, false );
             ProgressBar progressBar = findViewById( R.id.progress_bar );
 
             int appNum = appInfoList.size();
             int appCnt = 0;
 
             for ( ApplicationInfo appInfo: appInfoList ) {
+                progressBar.setProgress( 100 * ( ++appCnt ) / appNum );
+
+                if ( permissionCheck ) {
+                    PackageInfo packageInfo;
+                    try {
+                        packageInfo = mPackageManager.getPackageInfo( appInfo.packageName, PackageManager.GET_PERMISSIONS );
+                    } catch ( PackageManager.NameNotFoundException ex ) {
+                        continue;
+                    }
+                    if ( packageInfo.requestedPermissions == null ) {
+                        continue;
+                    }
+
+                    boolean hasPermission = false;
+                    for ( String permission: packageInfo.requestedPermissions ) {
+                        if ( permission.equals( android.Manifest.permission.POST_NOTIFICATIONS ) ) {
+                            hasPermission = true;
+                            break;
+                        }
+                    }
+                    if ( !hasPermission ) {
+                        continue;
+                    }
+                }
+
                 boolean isAvailable = availableAppList.contains( ";" + appInfo.packageName + ";" );
 
                 mAppList.add( new AppListItem(
@@ -254,8 +282,6 @@ public class AppListActivity extends AppCompatActivity {
                 if ( isAvailable ) {
                     mAvailableAppList.put( appInfo.packageName, true );
                 }
-
-                progressBar.setProgress( 100 * ( ++appCnt ) / appNum );
 
                 if ( Thread.currentThread().isInterrupted() ) {
                     return;
