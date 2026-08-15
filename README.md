@@ -38,15 +38,19 @@ Android Auto未対応のアプリの通知をAndroid Autoヘッドユニット�
 1. 通知内容は停車中に確認してください。
 1. AANotifierの「テスト向け設定」は特に指示がなければ変更しないでください。
 
-![AA Notification](https://user-images.githubusercontent.com/4351207/96069583-7ba47680-0ed9-11eb-8360-063d5e9dc99f.png)
+## スクリーンショット
 
-![AA Notification Area](https://user-images.githubusercontent.com/4351207/96069606-84954800-0ed9-11eb-9e66-a7051e8e67f0.png)
+![AA Head Unit 1](./image/aanotifier-head-unit-preview1.png)
 
-![MainActivity](https://user-images.githubusercontent.com/4351207/96069645-9a0a7200-0ed9-11eb-882f-b1a1af4570d6.jpg)
+![AA Head Unit 2](./image/aanotifier-head-unit-preview2.png)
 
-![AppListActivity](https://user-images.githubusercontent.com/4351207/96069699-b1495f80-0ed9-11eb-98e2-168d253c4121.jpg)
+![AA Head Unit 3](./image/aanotifier-head-unit-preview3.png)
 
-![Notification Access](https://user-images.githubusercontent.com/4351207/96069713-b9090400-0ed9-11eb-8e49-dfbcbdca5f4c.jpg)
+![MainActivity](./image/aanotifier-main-activity-preview.png)
+
+![AppListActivity](./image/aanotifier-list-activity-preview.png)
+
+![Notification Access](./image/aanotifier-notification-access-preview.png)
 
 # Main source code file
 [MessagingService.java](https://github.com/sckzw/AANotifier/blob/master/mobile/src/main/java/io/github/sckzw/aanotifier/MessagingService.java "MessagingService.java")
